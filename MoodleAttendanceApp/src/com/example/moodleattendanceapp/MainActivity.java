@@ -1,22 +1,37 @@
 package com.example.moodleattendanceapp;
 
+import android.app.ActionBar;
 import android.app.Activity;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
 	int a,b,c;
-	
+	ActionBar mActionBar;
 	EditText txtUserName,txtPassword;
-	
+	TextView tv;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
+		SetActionBar();
 	}
+	
+	public void SetActionBar() {
+		mActionBar = getActionBar();
+		//mActionBar.setDisplayShowHomeEnabled(false);
+		mActionBar.setDisplayShowTitleEnabled(true);
+		mActionBar.setBackgroundDrawable(new ColorDrawable(Color
+				.parseColor("#FFB917")));
+		mActionBar.setTitle("Login");
+	}
+
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
