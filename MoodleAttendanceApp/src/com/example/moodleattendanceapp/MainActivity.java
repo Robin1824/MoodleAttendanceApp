@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 public class MainActivity extends Activity {
 
 	int a,b,c;
+	
+	EditText txtUserName,txtPassword;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
