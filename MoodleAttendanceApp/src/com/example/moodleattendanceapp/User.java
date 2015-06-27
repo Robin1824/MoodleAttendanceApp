@@ -1,6 +1,9 @@
 package com.example.moodleattendanceapp;
 
-public class User
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class User extends JSONObject
 {
     private Course[] course;
 
@@ -19,6 +22,25 @@ public class User
     private String last_name;
 
     private String full_name;
+    
+    public User(JSONObject obj) throws JSONException
+    {
+    	try
+    	{
+    		id=obj.getString("id");
+    		profile_pic_url=obj.getString("profile_pic_url");
+    		first_name=obj.getString("first_name");
+    		user_name=obj.getString("user_name");
+    		role_id=obj.getString("role_id");
+    		role_short_name=obj.getString("role_short_name");
+    		last_name=obj.getString("last_name");
+    		full_name=obj.getString("full_name");
+    	}
+    	catch(JSONException e)
+    	{
+    		throw e;
+    	}
+    }
 
     public Course[] getCourse ()
     {

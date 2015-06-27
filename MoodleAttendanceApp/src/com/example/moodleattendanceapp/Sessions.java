@@ -1,6 +1,9 @@
 package com.example.moodleattendanceapp;
 
-public class Sessions
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class Sessions extends JSONObject
 {
     private String id;
 
@@ -21,6 +24,27 @@ public class Sessions
     private String groupid;
 
     private String sessdate;
+    
+    public Sessions(JSONObject obj) throws JSONException
+    {
+    	try
+    	{
+    		id=obj.getString("id");
+    		duration=obj.getString("duration");
+    		studentscanmark=obj.getString("studentscanmark");
+    		lasttaken=obj.getString("lasttaken");
+    		description=obj.getString("description");
+    		descriptionformat=obj.getString("descriptionformat");
+    		timemodified=obj.getString("timemodified");
+    		lasttakenby=obj.getString("lasttakenby");
+    		groupid=obj.getString("groupid");
+    		sessdate=obj.getString("sessdate");
+    	}
+    	catch(JSONException e)
+    	{
+    		throw e;
+    	}
+    }
 
     public String getId ()
     {

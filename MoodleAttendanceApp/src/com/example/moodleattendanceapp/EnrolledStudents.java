@@ -1,6 +1,9 @@
 package com.example.moodleattendanceapp;
 
-public class EnrolledStudents
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class EnrolledStudents extends JSONObject
 {
     private String profile_pic_url;
 
@@ -13,6 +16,25 @@ public class EnrolledStudents
     private String user_id;
 
     private String full_name;
+    
+    public EnrolledStudents(JSONObject obj) throws JSONException {
+
+		try
+		{
+			profile_pic_url=obj.getString("profile_pic_url");
+			user_name=obj.getString("user_name");
+			first_name=obj.getString("first_name");
+			last_name=obj.getString("last_name");
+			user_id=obj.getString("user_id");
+			full_name=obj.getString("full_name");
+		
+		}
+		catch(JSONException e)
+		{
+			throw e;
+		}
+	
+	}
 
     public String getProfile_pic_url ()
     {

@@ -1,6 +1,10 @@
 package com.example.moodleattendanceapp;
 
-public class Attendance
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+public class Attendance extends JSONObject
 {
     private String id;
 
@@ -11,6 +15,36 @@ public class Attendance
     private String grade;
 
     private Statuses[] statuses;
+    
+    public Attendance(JSONObject obj) throws JSONException
+    {
+    	try
+    	{
+    		id=obj.getString("id");
+    		name=obj.getString("name");
+    		grade=obj.getString("grade");
+    		
+    		JSONArray sessionsArr=obj.getJSONArray("sessions");
+    		JSONArray statusesArr=obj.getJSONArray("statuses");
+    		
+    		for(int i=0;i<sessionsArr.length();i++)
+    		{
+    			Sessions s=new Sessions(sessionsArr.getJSONObject(i));
+    			sessions[i]=s;
+    		}
+    		
+    		for(int i=0;i<statusesArr.length();i++)
+    		{
+    			Statuses s=new Statuses(statusesArr.getJSONObject(i));
+    			statuses[i]=s;
+    		}
+    		
+    	}
+    	catch(JSONException e)
+    	{
+    		throw e;
+    	}
+    }
 
     public String getId ()
     {
