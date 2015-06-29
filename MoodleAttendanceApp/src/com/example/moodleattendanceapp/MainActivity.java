@@ -1,19 +1,34 @@
 package com.example.moodleattendanceapp;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Fragment;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class MainActivity extends Activity {
@@ -21,21 +36,37 @@ public class MainActivity extends Activity {
 	ActionBar mActionBar;
 	EditText etUserName, etPassword;
 	Button btnUserLogin;
-	
+	String uname = "", pwd = "", response="";
+	Fragment fragment_UserCourse=null;
 	// flag for Internet connection status
-    Boolean isInternetPresent = false;
-     
+    Boolean isInternetPresent = false,flagResponse=false;
+    FrameLayout LayoutUserLoginScreen;
+    LinearLayout LayoutCourseListScreen; 
+    
     // Connection detector class
     ConnectionDetector cd;
+    
+    ListView CourseList;
+	ImageView imgProPic;
+	TextView tvUserFullName,tvRoleName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_main);
 		SetActionBar();
 		etUserName = (EditText) findViewById(R.id.etUsername);
 		etPassword = (EditText) findViewById(R.id.etPassword);
 		btnUserLogin = (Button) findViewById(R.id.btnLogin);
+		
+		LayoutUserLoginScreen=(FrameLayout)findViewById(R.id.LayoutUserLoginScreen);
+		LayoutCourseListScreen=(LinearLayout)findViewById(R.id.LayoutCourseListScreen);
+		
+		imgProPic=(ImageView)findViewById(R.id.imgUserProPic);
+		CourseList=(ListView)findViewById(R.id.lvCourseList);
+		tvUserFullName=(TextView)findViewById(R.id.tvUserFullName);
+		tvRoleName=(TextView)findViewById(R.id.tvUserRole);
 		
 		// creating connection detector class instance
         cd = new ConnectionDetector(getApplicationContext());
@@ -71,7 +102,16 @@ public class MainActivity extends Activity {
             if (isInternetPresent) {
                 // Internet Connection is Present
                 // make HTTP requests
-                openAlert("Internet Connection","You have internet connection");
+               // openAlert("Internet Connection","You have internet connection");
+                uname=etUserName.getText().toString();
+                pwd=etPassword.getText().toString();
+                
+                AsyncCallWS task = new AsyncCallWS();
+				task.execute("");
+                
+                
+                
+                
             } else {
                 // Internet connection is not present
                 // Ask user to connect to Internet
@@ -124,6 +164,94 @@ public class MainActivity extends Activity {
 		AlertDialog alertDialog = alertDialogBuilder.create();
 		// show alert
 		alertDialog.show();
+	}
+	
+	private class AsyncCallWS extends AsyncTask<String, Void, Void> {
+		@Override
+		protected Void doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			Log.i("in back", "ok");
+			fetchJSON();
+			Log.i("in back last", "ok");
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			setProgressBarIndeterminateVisibility(Boolean.FALSE);
+			if (flagResponse == true) {
+				LayoutUserLoginScreen.setVisibility(View.GONE);
+				LayoutCourseListScreen.setVisibility(View.VISIBLE);
+			}
+			else if (flagResponse==false) {
+				openAlert("Login Incorrect", "Please enter correct Username and Password");
+			}
+		}
+
+		@Override
+		protected void onPreExecute() {
+			setProgressBarIndeterminateVisibility(Boolean.TRUE);
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void fetchJSON() {
+		Log.i("In fetchJson", "ok");
+
+		Log.i("In C==null", "ok");
+			try {
+				// Log.i("URL", url);
+				String FinalURL = "http://rutvik.ddns.net/webservice.php?method=login&user_name="+uname+"&password="+pwd;
+				// Log.i("Final URL", FinalURL);
+				HttpPost post = new HttpPost(FinalURL);
+				post.setHeader("Accept", "application/json; charset=UTF-8");
+
+				/*List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
+						2);
+				//user_name=131040119001&password=Reset@123
+				nameValuePairs
+						.add(new BasicNameValuePair("user_name", uname));
+				nameValuePairs.add(new BasicNameValuePair("password", pwd));
+
+				Log.i("pass", nameValuePairs.toString());
+				post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+*/
+				HttpClient client = new DefaultHttpClient();
+
+				HttpResponse resp = (HttpResponse) client.execute(post);
+
+				HttpEntity entity = resp.getEntity();
+
+				response = EntityUtils.toString(entity);
+				Log.v("response info : ", "Hello My Res : "+response);
+				if (response.indexOf("error") == -1) {
+				//JSONObject UserLogin=new JSONObject(response);
+				JSONObject ja = new JSONObject(response);
+				Log.i("after json", "ok");
+
+				User u=new User(ja.getJSONObject("user"));
+				
+				Log.i("role short nm","Hello: "+u.getRole_short_name());
+				flagResponse = true;
+				Log.v("end fetchJson()", "Hello run ok");
+				}
+				else
+				{
+					
+					flagResponse=false;
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			/*if (flagResponse == 1) {
+				Log.i("Call readjson", "ok");
+				readAndParseJSON(response);
+			}*/
+
+		
+
 	}
 
 	@Override
