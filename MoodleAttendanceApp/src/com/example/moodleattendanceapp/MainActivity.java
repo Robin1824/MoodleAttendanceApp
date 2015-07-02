@@ -1,5 +1,7 @@
 package com.example.moodleattendanceapp;
 
+import java.net.URL;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -13,6 +15,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -42,7 +46,7 @@ public class MainActivity extends Activity {
     Boolean isInternetPresent = false,flagResponse=false;
     FrameLayout LayoutUserLoginScreen;
     LinearLayout LayoutCourseListScreen; 
-    
+    User u;
     // Connection detector class
     ConnectionDetector cd;
     
@@ -182,6 +186,10 @@ public class MainActivity extends Activity {
 			if (flagResponse == true) {
 				LayoutUserLoginScreen.setVisibility(View.GONE);
 				LayoutCourseListScreen.setVisibility(View.VISIBLE);
+			
+				tvUserFullName.setText(u.getFull_name());
+				tvRoleName.setText(u.getRole_short_name());
+
 			}
 			else if (flagResponse==false) {
 				openAlert("Login Incorrect", "Please enter correct Username and Password");
@@ -229,7 +237,7 @@ public class MainActivity extends Activity {
 				JSONObject ja = new JSONObject(response);
 				Log.i("after json", "ok");
 
-				User u=new User(ja.getJSONObject("user"));
+				u=new User(ja.getJSONObject("user"));
 				
 				Log.i("role short nm","Hello: "+u.getRole_short_name());
 				flagResponse = true;

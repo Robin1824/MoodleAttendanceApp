@@ -3,6 +3,8 @@ package com.example.moodleattendanceapp;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.net.Uri;
+
 public class User extends JSONObject
 {
     private Course[] course;
