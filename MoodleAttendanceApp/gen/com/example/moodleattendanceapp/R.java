@@ -46,6 +46,7 @@ public final class R {
         public static final int activity_about_us=0x7f030000;
         public static final int activity_main=0x7f030001;
         public static final int user_course_fragment=0x7f030002;
+        public static final int user_login_fragment=0x7f030003;
     }
     public static final class menu {
         public static final int about_us=0x7f070000;
