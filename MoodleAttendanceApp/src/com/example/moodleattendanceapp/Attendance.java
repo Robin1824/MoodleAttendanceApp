@@ -1,20 +1,55 @@
 package com.example.moodleattendanceapp;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Attendance extends JSONObject
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+public class Attendance extends JSONObject implements Parcelable
 {
     private String id;
 
-    private Sessions[] sessions;
+    private ArrayList<Sessions> sessions=new ArrayList<>();
 
     private String name;
 
     private String grade;
 
-    private Statuses[] statuses;
+    private ArrayList<Statuses> statuses=new ArrayList<>();
+    
+    public Attendance(Parcel p)
+    {
+    	id=p.readString();
+    	
+    	p.readTypedList(sessions,Sessions.CREATOR);
+    	
+    	name=p.readString();
+    	grade=p.readString();
+    	
+    	p.readTypedList(statuses,Statuses.CREATOR);
+
+    }
+    
+    public static final Parcelable.Creator<Attendance> CREATOR = new Parcelable.Creator<Attendance>() {
+
+		@Override
+		public Attendance createFromParcel(Parcel source) {
+			// TODO Auto-generated method stub
+			return new Attendance(source);
+		}
+
+		@Override
+		public Attendance[] newArray(int size) {
+			// TODO Auto-generated method stub
+			return new Attendance[size];
+		}
+	};
     
     public Attendance(JSONObject obj) throws JSONException
     {
@@ -24,19 +59,28 @@ public class Attendance extends JSONObject
     		name=obj.getString("name");
     		grade=obj.getString("grade");
     		
+    		Log.i("moodle", "OKOKOK");
+    		
     		JSONArray sessionsArr=obj.getJSONArray("sessions");
+    		
     		JSONArray statusesArr=obj.getJSONArray("statuses");
+    		
+    		//sessions=new Sessions[sessionsArr.length()];
+    		
+    		//statuses=new Statuses[statusesArr.length()];
     		
     		for(int i=0;i<sessionsArr.length();i++)
     		{
     			Sessions s=new Sessions(sessionsArr.getJSONObject(i));
-    			sessions[i]=s;
+    			sessions.add(s);
     		}
+    		
+    		
     		
     		for(int i=0;i<statusesArr.length();i++)
     		{
     			Statuses s=new Statuses(statusesArr.getJSONObject(i));
-    			statuses[i]=s;
+    			statuses.add(s);
     		}
     		
     	}
@@ -56,12 +100,12 @@ public class Attendance extends JSONObject
         this.id = id;
     }
 
-    public Sessions[] getSessions ()
+    public ArrayList<Sessions> getSessions ()
     {
         return sessions;
     }
 
-    public void setSessions (Sessions[] sessions)
+    public void setSessions (ArrayList<Sessions> sessions)
     {
         this.sessions = sessions;
     }
@@ -86,19 +130,30 @@ public class Attendance extends JSONObject
         this.grade = grade;
     }
 
-    public Statuses[] getStatuses ()
+    public ArrayList<Statuses> getStatuses ()
     {
         return statuses;
     }
 
-    public void setStatuses (Statuses[] statuses)
+    public void setStatuses (ArrayList<Statuses> statuses)
     {
         this.statuses = statuses;
     }
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [id = "+id+", sessions = "+sessions+", name = "+name+", grade = "+grade+", statuses = "+statuses+"]";
-    }
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		
+		dest.writeString(id);
+		dest.writeTypedList(sessions);
+		dest.writeString(name);
+		dest.writeString(grade);
+		dest.writeTypedList(statuses);
+		
+	}
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }
