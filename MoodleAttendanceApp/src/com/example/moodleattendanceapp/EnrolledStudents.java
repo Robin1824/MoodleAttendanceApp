@@ -3,7 +3,10 @@ package com.example.moodleattendanceapp;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class EnrolledStudents extends JSONObject
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class EnrolledStudents extends JSONObject implements Parcelable
 {
     private String profile_pic_url;
 
@@ -16,6 +19,31 @@ public class EnrolledStudents extends JSONObject
     private String user_id;
 
     private String full_name;
+    
+    public EnrolledStudents(Parcel p)
+    {
+    	profile_pic_url=p.readString();
+    	user_name=p.readString();
+    	first_name=p.readString();
+    	last_name=p.readString();
+    	user_id=p.readString();
+    	full_name=p.readString();
+    }
+    
+    public static final Parcelable.Creator<EnrolledStudents> CREATOR = new Parcelable.Creator<EnrolledStudents>() {
+
+		@Override
+		public EnrolledStudents createFromParcel(Parcel source) {
+			// TODO Auto-generated method stub
+			return new EnrolledStudents(source);
+		}
+
+		@Override
+		public EnrolledStudents[] newArray(int size) {
+			// TODO Auto-generated method stub
+			return new EnrolledStudents[size];
+		}
+	};
     
     public EnrolledStudents(JSONObject obj) throws JSONException {
 
@@ -96,9 +124,21 @@ public class EnrolledStudents extends JSONObject
         this.full_name = full_name;
     }
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [profile_pic_url = "+profile_pic_url+", user_name = "+user_name+", first_name = "+first_name+", last_name = "+last_name+", user_id = "+user_id+", full_name = "+full_name+"]";
-    }
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		
+		dest.writeString(profile_pic_url);
+		dest.writeString(user_name);
+		dest.writeString(first_name);
+		dest.writeString(last_name);
+		dest.writeString(user_id);
+		dest.writeString(full_name);
+		
+	}
 }

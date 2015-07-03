@@ -1,13 +1,19 @@
 package com.example.moodleattendanceapp;
 
+import java.util.ArrayList;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.net.Uri;
 
-public class User extends JSONObject
+
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class User extends JSONObject implements Parcelable
 {
-    private Course[] course;
+    private ArrayList<Course> course;
 
     private String id;
 
@@ -24,6 +30,34 @@ public class User extends JSONObject
     private String last_name;
 
     private String full_name;
+    
+    public User(Parcel p)
+    {
+    	p.readTypedList(course, Course.CREATOR);
+    	id=p.readString();
+    	profile_pic_url=p.readString();
+    	first_name=p.readString();
+    	user_name=p.readString();
+    	role_id=p.readString();
+    	role_short_name=p.readString();
+    	last_name=p.readString();
+    	full_name=p.readString();
+    }
+    
+    public static final Parcelable.Creator<User> CREATOR=new Parcelable.Creator<User>() {
+
+		@Override
+		public User createFromParcel(Parcel source) {
+			// TODO Auto-generated method stub
+			return new User(source);
+		}
+
+		@Override
+		public User[] newArray(int size) {
+			// TODO Auto-generated method stub
+			return new User[size];
+		}
+	};
     
     public User(JSONObject obj) throws JSONException
     {
@@ -44,12 +78,12 @@ public class User extends JSONObject
     	}
     }
 
-    public Course[] getCourse ()
+    public ArrayList<Course> getCourse ()
     {
         return course;
     }
 
-    public void setCourse (Course[] course)
+    public void setCourse (ArrayList<Course> course)
     {
         this.course = course;
     }
@@ -134,9 +168,25 @@ public class User extends JSONObject
         this.full_name = full_name;
     }
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [course = "+course+", id = "+id+", profile_pic_url = "+profile_pic_url+", first_name = "+first_name+", user_name = "+user_name+", role_id = "+role_id+", role_short_name = "+role_short_name+", last_name = "+last_name+", full_name = "+full_name+"]";
-    }
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		
+		dest.writeTypedList(course);
+		dest.writeString(id);
+		dest.writeString(profile_pic_url);
+		dest.writeString(first_name);
+		dest.writeString(user_name);
+		dest.writeString(role_id);
+		dest.writeString(role_short_name);
+		dest.writeString(last_name);
+		dest.writeString(full_name);
+		
+	}
+
 }

@@ -3,7 +3,10 @@ package com.example.moodleattendanceapp;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Statuses extends JSONObject
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Statuses extends JSONObject implements Parcelable
 {
     private String id;
 
@@ -16,6 +19,31 @@ public class Statuses extends JSONObject
     private String grade;
 
     private String deleted;
+    
+    public Statuses(Parcel p)
+    {
+    	id=p.readString();
+    	visible=p.readString();
+    	acronym=p.readString();
+    	description=p.readString();
+    	grade=p.readString();
+    	deleted=p.readString();
+    }
+    
+    public static final Parcelable.Creator<Statuses> CREATOR = new Parcelable.Creator<Statuses>() {
+
+		@Override
+		public Statuses createFromParcel(Parcel source) {
+			// TODO Auto-generated method stub
+			return new Statuses(source);
+		}
+
+		@Override
+		public Statuses[] newArray(int size) {
+			// TODO Auto-generated method stub
+			return new Statuses[size];
+		}
+	};
     
     public Statuses(JSONObject obj) throws JSONException
     {
@@ -98,4 +126,22 @@ public class Statuses extends JSONObject
     {
         return "ClassPojo [id = "+id+", visible = "+visible+", acronym = "+acronym+", description = "+description+", grade = "+grade+", deleted = "+deleted+"]";
     }
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		
+		dest.writeString(id);
+		dest.writeString(visible);
+		dest.writeString(acronym);
+		dest.writeString(description);
+		dest.writeString(grade);
+		dest.writeString(deleted);
+		
+	}
 }

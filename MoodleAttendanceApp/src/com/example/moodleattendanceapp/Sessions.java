@@ -3,7 +3,10 @@ package com.example.moodleattendanceapp;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Sessions extends JSONObject
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Sessions extends JSONObject implements Parcelable
 {
     private String id;
 
@@ -24,6 +27,35 @@ public class Sessions extends JSONObject
     private String groupid;
 
     private String sessdate;
+    
+    public Sessions(Parcel p)
+    {
+    	id=p.readString();
+    	duration=p.readString();
+    	studentscanmark=p.readString();
+    	lasttaken=p.readString();
+    	description=p.readString();
+    	descriptionformat=p.readString();
+    	timemodified=p.readString();
+    	lasttakenby=p.readString();
+    	groupid=p.readString();
+    	sessdate=p.readString();
+    }
+    
+    public static final Parcelable.Creator<Sessions> CREATOR = new Parcelable.Creator<Sessions>() {
+
+		@Override
+		public Sessions createFromParcel(Parcel source) {
+			// TODO Auto-generated method stub
+			return new Sessions(source);
+		}
+
+		@Override
+		public Sessions[] newArray(int size) {
+			// TODO Auto-generated method stub
+			return new Sessions[size];
+		}
+	};
     
     public Sessions(JSONObject obj) throws JSONException
     {
@@ -146,9 +178,26 @@ public class Sessions extends JSONObject
         this.sessdate = sessdate;
     }
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [id = "+id+", duration = "+duration+", studentscanmark = "+studentscanmark+", lasttaken = "+lasttaken+", description = "+description+", descriptionformat = "+descriptionformat+", timemodified = "+timemodified+", lasttakenby = "+lasttakenby+", groupid = "+groupid+", sessdate = "+sessdate+"]";
-    }
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		
+		dest.writeString(id);
+		dest.writeString(duration);
+		dest.writeString(studentscanmark);
+		dest.writeString(lasttaken);
+		dest.writeString(description);
+		dest.writeString(descriptionformat);
+		dest.writeString(timemodified);
+		dest.writeString(lasttakenby);
+		dest.writeString(groupid);
+		dest.writeString(sessdate);
+		
+	}
+	
 }
