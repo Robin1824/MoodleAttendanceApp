@@ -2,7 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical"
+    android:background="#D3CFDF" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,10 +13,14 @@
 
         <ImageView
             android:id="@+id/imgUserProPic"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginLeft="10dp"
             android:contentDescription="Profile image"
+            android:cropToPadding="true"
+            android:padding="1dp"
+            android:scaleType="fitXY"
+            android:background="@+drawable/propic_image_border"
             android:src="@drawable/f1" />
 
         <LinearLayout
@@ -57,13 +62,14 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="10dp"
             android:text="Course"
+            android:textColor="#2E64FE"
             android:textSize="30sp" />
 
         <ListView
             android:id="@+id/lvCourseList"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp" >
+            android:layout_marginLeft="10dp">
         </ListView>
     </LinearLayout>
 

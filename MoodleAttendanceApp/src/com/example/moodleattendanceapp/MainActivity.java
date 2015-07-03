@@ -14,7 +14,11 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -40,19 +44,21 @@ public class MainActivity extends Activity {
 	ActionBar mActionBar;
 	EditText etUserName, etPassword;
 	Button btnUserLogin;
-	String uname = "", pwd = "", response="";
-	Fragment fragment_UserCourse=null;
+	String uname = "", pwd = "", response = "";
+	Fragment fragment_UserCourse = null;
 	// flag for Internet connection status
-    Boolean isInternetPresent = false,flagResponse=false;
-    FrameLayout LayoutUserLoginScreen;
-    LinearLayout LayoutCourseListScreen; 
-    User u;
-    // Connection detector class
-    ConnectionDetector cd;
-    
-    ListView CourseList;
+	Boolean isInternetPresent = false, flagResponse = false;
+	FrameLayout LayoutUserLoginScreen;
+	LinearLayout LayoutCourseListScreen;
+	User u;
+	// Connection detector class
+	ConnectionDetector cd;
+
+	ListView CourseList;
 	ImageView imgProPic;
-	TextView tvUserFullName,tvRoleName;
+	TextView tvUserFullName, tvRoleName;
+	SharedPreferences mSharedPreferences;
+	Editor mEditor;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,29 +66,61 @@ public class MainActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_main);
 		SetActionBar();
-		etUserName = (EditText) findViewById(R.id.etUsername);
-		etPassword = (EditText) findViewById(R.id.etPassword);
-		btnUserLogin = (Button) findViewById(R.id.btnLogin);
-		
-		LayoutUserLoginScreen=(FrameLayout)findViewById(R.id.LayoutUserLoginScreen);
-		LayoutCourseListScreen=(LinearLayout)findViewById(R.id.LayoutCourseListScreen);
-		
-		imgProPic=(ImageView)findViewById(R.id.imgUserProPic);
-		CourseList=(ListView)findViewById(R.id.lvCourseList);
-		tvUserFullName=(TextView)findViewById(R.id.tvUserFullName);
-		tvRoleName=(TextView)findViewById(R.id.tvUserRole);
-		
-		// creating connection detector class instance
-        cd = new ConnectionDetector(getApplicationContext());
+		Log.i("bef call frag", "Login frag");
 
-		btnUserLogin.setOnClickListener(new OnClickListener() {
+		Log.i("aftr call", "Login frag");
 
-			@Override
-			public void onClick(View v) {
-				// TODO Auto-generated method stub
-				UserLogin(v);
-			}
-		});
+		mSharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
+
+		if (!(mSharedPreferences.contains("Username") && mSharedPreferences
+				.contains("Password"))) 
+		{
+			Log.i("no data in pref", "ok");
+
+			UserLoginFragment sf = new UserLoginFragment();
+			getFragmentManager().beginTransaction()
+					.replace(R.id.frame_layout, sf).commit();
+		}
+		else
+		{
+			Log.i("data in pref", "ok");
+			
+			Bundle b=new Bundle();
+			UserCourseFragment sf = new UserCourseFragment();
+			b.putString("user_id","0");
+			b.putString("user_fullname", "1");
+			b.putString("user_role_name", "2");
+			b.putString("user_propic_url", "http://rutvik.ddns.net//pluginfile.php//119//user//icon//f1");
+			sf.setArguments(b);
+			
+			
+			getFragmentManager().beginTransaction()
+					.replace(R.id.frame_layout, sf).commit();
+		}
+
+		/*
+		 * etUserName = (EditText) findViewById(R.id.etUsername); etPassword =
+		 * (EditText) findViewById(R.id.etPassword); btnUserLogin = (Button)
+		 * findViewById(R.id.btnLogin);
+		 * 
+		 * LayoutUserLoginScreen=(FrameLayout)findViewById(R.id.
+		 * LayoutUserLoginScreen);
+		 * LayoutCourseListScreen=(LinearLayout)findViewById
+		 * (R.id.LayoutCourseListScreen);
+		 * 
+		 * imgProPic=(ImageView)findViewById(R.id.imgUserProPic);
+		 * CourseList=(ListView)findViewById(R.id.lvCourseList);
+		 * tvUserFullName=(TextView)findViewById(R.id.tvUserFullName);
+		 * tvRoleName=(TextView)findViewById(R.id.tvUserRole);
+		 * 
+		 * // creating connection detector class instance cd = new
+		 * ConnectionDetector(getApplicationContext());
+		 * 
+		 * btnUserLogin.setOnClickListener(new OnClickListener() {
+		 * 
+		 * @Override public void onClick(View v) { // TODO Auto-generated method
+		 * stub UserLogin(v); } });
+		 */
 	}
 
 	public void SetActionBar() {
@@ -91,37 +129,35 @@ public class MainActivity extends Activity {
 		mActionBar.setDisplayShowTitleEnabled(true);
 		mActionBar.setBackgroundDrawable(new ColorDrawable(Color
 				.parseColor("#FFB917")));
-		mActionBar.setTitle("Login");
+		// mActionBar.setTitle("Login");
 	}
 
 	public void UserLogin(View v) {
 
 		if (!isEmpty(etUserName) && !isEmpty(etPassword)) {
-			//make HTTP request
-			
-			// get Internet status
-            isInternetPresent = cd.isConnectingToInternet();
+			// make HTTP request
 
-            // check for Internet status
-            if (isInternetPresent) {
-                // Internet Connection is Present
-                // make HTTP requests
-               // openAlert("Internet Connection","You have internet connection");
-                uname=etUserName.getText().toString();
-                pwd=etPassword.getText().toString();
-                
-                AsyncCallWS task = new AsyncCallWS();
+			// get Internet status
+			isInternetPresent = cd.isConnectingToInternet();
+
+			// check for Internet status
+			if (isInternetPresent) {
+				// Internet Connection is Present
+				// make HTTP requests
+				// openAlert("Internet Connection","You have internet connection");
+				uname = etUserName.getText().toString();
+				pwd = etPassword.getText().toString();
+
+				AsyncCallWS task = new AsyncCallWS();
 				task.execute("");
-                
-                
-                
-                
-            } else {
-                // Internet connection is not present
-                // Ask user to connect to Internet
-                openAlert("No Internet Connection","You don't have internet connection.");
-            }
-			
+
+			} else {
+				// Internet connection is not present
+				// Ask user to connect to Internet
+				openAlert("No Internet Connection",
+						"You don't have internet connection.");
+			}
+
 			/*
 			 * uname = et_Uname.getText().toString().toUpperCase(); pwd =
 			 * et_pwd.getText().toString();
@@ -138,11 +174,10 @@ public class MainActivity extends Activity {
 		} else {
 			if (isEmpty(etUserName)) {
 				etUserName.setHint("Enter Username");
-				openAlert("Message","Please Enter Username");
-			}
-			else if (isEmpty(etPassword)) {
+				openAlert("Message", "Please Enter Username");
+			} else if (isEmpty(etPassword)) {
 				etPassword.setHint("Enter Password");
-				openAlert("Message","Please Enter Password");
+				openAlert("Message", "Please Enter Password");
 			}
 		}
 	}
@@ -151,7 +186,7 @@ public class MainActivity extends Activity {
 		return etText.getText().toString().trim().length() == 0;
 	}
 
-	private void openAlert(String mTitle,String msg) {
+	private void openAlert(String mTitle, String msg) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
 				MainActivity.this);
 
@@ -169,7 +204,7 @@ public class MainActivity extends Activity {
 		// show alert
 		alertDialog.show();
 	}
-	
+
 	private class AsyncCallWS extends AsyncTask<String, Void, Void> {
 		@Override
 		protected Void doInBackground(String... params) {
@@ -186,13 +221,13 @@ public class MainActivity extends Activity {
 			if (flagResponse == true) {
 				LayoutUserLoginScreen.setVisibility(View.GONE);
 				LayoutCourseListScreen.setVisibility(View.VISIBLE);
-			
+
 				tvUserFullName.setText(u.getFull_name());
 				tvRoleName.setText(u.getRole_short_name());
 
-			}
-			else if (flagResponse==false) {
-				openAlert("Login Incorrect", "Please enter correct Username and Password");
+			} else if (flagResponse == false) {
+				openAlert("Login Incorrect",
+						"Please enter correct Username and Password");
 			}
 		}
 
@@ -201,64 +236,61 @@ public class MainActivity extends Activity {
 			setProgressBarIndeterminateVisibility(Boolean.TRUE);
 		}
 	}
-	
+
 	@SuppressWarnings("deprecation")
 	public void fetchJSON() {
 		Log.i("In fetchJson", "ok");
 
 		Log.i("In C==null", "ok");
-			try {
-				// Log.i("URL", url);
-				String FinalURL = "http://rutvik.ddns.net/webservice.php?method=login&user_name="+uname+"&password="+pwd;
-				// Log.i("Final URL", FinalURL);
-				HttpPost post = new HttpPost(FinalURL);
-				post.setHeader("Accept", "application/json; charset=UTF-8");
+		try {
+			// Log.i("URL", url);
+			String FinalURL = "http://rutvik.ddns.net/webservice.php?method=login&user_name="
+					+ uname + "&password=" + pwd;
+			// Log.i("Final URL", FinalURL);
+			HttpPost post = new HttpPost(FinalURL);
+			post.setHeader("Accept", "application/json; charset=UTF-8");
 
-				/*List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(
-						2);
-				//user_name=131040119001&password=Reset@123
-				nameValuePairs
-						.add(new BasicNameValuePair("user_name", uname));
-				nameValuePairs.add(new BasicNameValuePair("password", pwd));
+			/*
+			 * List<NameValuePair> nameValuePairs = new
+			 * ArrayList<NameValuePair>( 2);
+			 * //user_name=131040119001&password=Reset@123 nameValuePairs
+			 * .add(new BasicNameValuePair("user_name", uname));
+			 * nameValuePairs.add(new BasicNameValuePair("password", pwd));
+			 * 
+			 * Log.i("pass", nameValuePairs.toString()); post.setEntity(new
+			 * UrlEncodedFormEntity(nameValuePairs));
+			 */
+			HttpClient client = new DefaultHttpClient();
 
-				Log.i("pass", nameValuePairs.toString());
-				post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-*/
-				HttpClient client = new DefaultHttpClient();
+			HttpResponse resp = (HttpResponse) client.execute(post);
 
-				HttpResponse resp = (HttpResponse) client.execute(post);
+			HttpEntity entity = resp.getEntity();
 
-				HttpEntity entity = resp.getEntity();
-
-				response = EntityUtils.toString(entity);
-				Log.v("response info : ", "Hello My Res : "+response);
-				if (response.indexOf("error") == -1) {
-				//JSONObject UserLogin=new JSONObject(response);
+			response = EntityUtils.toString(entity);
+			Log.v("response info : ", "Hello My Res : " + response);
+			if (response.indexOf("error") == -1) {
+				// JSONObject UserLogin=new JSONObject(response);
 				JSONObject ja = new JSONObject(response);
 				Log.i("after json", "ok");
 
-				u=new User(ja.getJSONObject("user"));
-				
-				Log.i("role short nm","Hello: "+u.getRole_short_name());
+				u = new User(ja.getJSONObject("user"));
+
+				Log.i("role short nm", "Hello: " + u.getRole_short_name());
 				flagResponse = true;
 				Log.v("end fetchJson()", "Hello run ok");
-				}
-				else
-				{
-					
-					flagResponse=false;
-				}
+			} else {
 
-			} catch (Exception e) {
-				e.printStackTrace();
+				flagResponse = false;
 			}
 
-			/*if (flagResponse == 1) {
-				Log.i("Call readjson", "ok");
-				readAndParseJSON(response);
-			}*/
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		
+		/*
+		 * if (flagResponse == 1) { Log.i("Call readjson", "ok");
+		 * readAndParseJSON(response); }
+		 */
 
 	}
 
