@@ -1,20 +1,50 @@
 package com.example.moodleattendanceapp;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Course extends JSONObject {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Course extends JSONObject implements Parcelable
+{
 	
 	private String id;
 
-    private Attendance[] attendance;
+    private ArrayList<Attendance> attendance;
 
     private String short_name;
 
-    private EnrolledStudents[] enrolledStudents;
+    private ArrayList<EnrolledStudents> enrolledStudents;
 
     private String full_name;
+    
+    public Course(Parcel p)
+    {
+    	id=p.readString();
+    	p.readTypedList(attendance, Attendance.CREATOR);
+    	short_name=p.readString();
+    	p.readTypedList(enrolledStudents, EnrolledStudents.CREATOR);
+    	full_name=p.readString();
+    }
+    
+    public static final Parcelable.Creator<Course> CREATOR=new Parcelable.Creator<Course>() {
+
+		@Override
+		public Course createFromParcel(Parcel source) {
+			// TODO Auto-generated method stub
+			return new Course(source);
+		}
+
+		@Override
+		public Course[] newArray(int size) {
+			// TODO Auto-generated method stub
+			return new Course[size];
+		}
+	};
     
     public Course(JSONObject obj) throws JSONException
     {
@@ -27,7 +57,7 @@ public class Course extends JSONObject {
     		for(int i=0;i<attendanceArr.length();i++)
     		{
     			Attendance a=new Attendance(attendanceArr.getJSONObject(i));
-    			attendance[i]=a;
+    			attendance.add(a);
     		}
     	}
     	catch (JSONException e) {
@@ -45,12 +75,12 @@ public class Course extends JSONObject {
         this.id = id;
     }
 
-    public Attendance[] getAttendance ()
+    public ArrayList<Attendance> getAttendance ()
     {
         return attendance;
     }
 
-    public void setAttendance (Attendance[] attendance)
+    public void setAttendance (ArrayList<Attendance> attendance)
     {
         this.attendance = attendance;
     }
@@ -65,12 +95,12 @@ public class Course extends JSONObject {
         this.short_name = short_name;
     }
 
-    public EnrolledStudents[] getEnrolledStudents ()
+    public ArrayList<EnrolledStudents> getEnrolledStudents ()
     {
         return enrolledStudents;
     }
 
-    public void setEnrolled_students (EnrolledStudents[] enrolledStudents)
+    public void setEnrolled_students (ArrayList<EnrolledStudents> enrolledStudents)
     {
         this.enrolledStudents = enrolledStudents;
     }
@@ -85,10 +115,22 @@ public class Course extends JSONObject {
         this.full_name = full_name;
     }
 
-    @Override
-    public String toString()
-    {
-        return "ClassPojo [id = "+id+", attendance = "+attendance+", short_name = "+short_name+", enrolled_students = "+enrolledStudents+", full_name = "+full_name+"]";
-    }
+
+	@Override
+	public int describeContents() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		
+		dest.writeString(id);
+		dest.writeTypedList(attendance);
+		dest.writeString(short_name);
+		dest.writeTypedList(enrolledStudents);
+		dest.writeString(full_name);
+		
+	}
 
 }
