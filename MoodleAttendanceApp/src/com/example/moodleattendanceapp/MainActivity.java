@@ -1,9 +1,12 @@
 package com.example.moodleattendanceapp;
 
+import org.json.JSONObject;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -27,7 +30,11 @@ public class MainActivity extends Activity {
      
     // Connection detector class
     ConnectionDetector cd;
+    
+    String json="{\"attendance\":{\"id\":\"1\",\"name\":\"Attendance\",\"grade\":\"0\",\"sessions\":[{\"id\":\"1\",\"groupid\":\"0\",\"sessdate\":\"1434429000\",\"duration\":\"3600\",\"lasttaken\":\"1434629027\",\"lasttakenby\":\"78\",\"timemodified\":\"1434461465\",\"description\":\"Regularclasssession\",\"descriptionformat\":\"1\",\"studentscanmark\":\"0\"},{\"id\":\"2\",\"groupid\":\"0\",\"sessdate\":\"1434515400\",\"duration\":\"3600\",\"lasttaken\":\"1434491052\",\"lasttakenby\":\"78\",\"timemodified\":\"1434461465\",\"description\":\"Regularclasssession\",\"descriptionformat\":\"1\",\"studentscanmark\":\"0\"}],\"statuses\":[{\"id\":\"5\",\"acronym\":\"P\",\"description\":\"Present\",\"grade\":\"2\",\"visible\":\"1\",\"deleted\":\"0\"},{\"id\":\"6\",\"acronym\":\"A\",\"description\":\"Absent\",\"grade\":\"0\",\"visible\":\"1\",\"deleted\":\"0\"},{\"id\":\"7\",\"acronym\":\"L\",\"description\":\"Late\",\"grade\":\"1\",\"visible\":\"0\",\"deleted\":\"0\"},{\"id\":\"8\",\"acronym\":\"E\",\"description\":\"Excused\",\"grade\":\"1\",\"visible\":\"0\",\"deleted\":\"0\"}]}}";
 
+    Attendance a=null;
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -39,6 +46,22 @@ public class MainActivity extends Activity {
 		
 		// creating connection detector class instance
         cd = new ConnectionDetector(getApplicationContext());
+        
+        
+        try
+        {
+        	JSONObject att=new JSONObject(json).getJSONObject("attendance");
+        	a=new Attendance(att);
+        	Log.i("moodle", "json parced successfully");
+        	Log.i("moodle","id is: "+ a.getId());
+        }
+        catch(Exception e)
+        {
+        	Log.e("moodle", e.toString());
+        }
+        
+        
+        
 
 		btnUserLogin.setOnClickListener(new OnClickListener() {
 
@@ -46,6 +69,22 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				UserLogin(v);
+				
+				//
+				
+					Intent i=new Intent(v.getContext(),AboutUs.class);
+					Bundle b=new Bundle();
+					b.putParcelableArrayList("sessions", a.getSessions());
+					//b.putParcelable("att", a);
+					i.putExtras(b);
+					
+					i.putExtra("att", a);
+					
+					
+					startActivity(i);
+				
+				//
+				
 			}
 		});
 	}
