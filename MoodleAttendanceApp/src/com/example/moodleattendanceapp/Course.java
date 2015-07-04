@@ -14,11 +14,19 @@ public class Course extends JSONObject implements Parcelable
 	
 	private String id;
 
+<<<<<<< HEAD
     private ArrayList<Attendance> attendance=new ArrayList<Attendance>();
+=======
+    private ArrayList<Attendance> attendance;
+>>>>>>> refs/remotes/origin/master
 
     private String short_name;
 
+<<<<<<< HEAD
     private ArrayList<EnrolledStudents> enrolledStudents=new ArrayList<EnrolledStudents>();
+=======
+    private ArrayList<EnrolledStudents> enrolledStudents;
+>>>>>>> refs/remotes/origin/master
 
     private String full_name;
     
@@ -60,11 +68,14 @@ public class Course extends JSONObject implements Parcelable
     		{
     			Attendance a=new Attendance(attendanceArr.getJSONObject(i));
     			attendance.add(a);
+<<<<<<< HEAD
     		}
     		}
     		catch(Exception e)
     		{
     			
+=======
+>>>>>>> refs/remotes/origin/master
     		}
     	}
     	catch (JSONException e) {
