@@ -16,8 +16,10 @@ public class User extends JSONObject implements Parcelable
     private ArrayList<Course> course;
 
     private String id;
+    
+    private String token;
 
-    private String profile_pic_url;
+	private String profile_pic_url;
 
     private String first_name;
 
@@ -35,6 +37,7 @@ public class User extends JSONObject implements Parcelable
     {
     	p.readTypedList(course, Course.CREATOR);
     	id=p.readString();
+    	token=p.readString();
     	profile_pic_url=p.readString();
     	first_name=p.readString();
     	user_name=p.readString();
@@ -64,6 +67,7 @@ public class User extends JSONObject implements Parcelable
     	try
     	{
     		id=obj.getString("id");
+    		token=obj.getString("token");
     		profile_pic_url=obj.getString("profile_pic_url");
     		first_name=obj.getString("first_name");
     		user_name=obj.getString("user_name");
@@ -97,6 +101,14 @@ public class User extends JSONObject implements Parcelable
     {
         this.id = id;
     }
+    
+    public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
 
     public String getProfile_pic_url ()
     {
@@ -179,6 +191,7 @@ public class User extends JSONObject implements Parcelable
 		
 		dest.writeTypedList(course);
 		dest.writeString(id);
+		dest.writeString(token);
 		dest.writeString(profile_pic_url);
 		dest.writeString(first_name);
 		dest.writeString(user_name);

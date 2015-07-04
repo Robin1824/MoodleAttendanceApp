@@ -17,6 +17,7 @@ import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
@@ -45,18 +46,18 @@ public class MainActivity extends Activity {
 	EditText etUserName, etPassword;
 	Button btnUserLogin;
 	String uname = "", pwd = "", response = "";
-	Fragment fragment_UserCourse = null;
+	//Fragment fragment_UserCourse = null;
 	// flag for Internet connection status
 	Boolean isInternetPresent = false, flagResponse = false;
-	FrameLayout LayoutUserLoginScreen;
-	LinearLayout LayoutCourseListScreen;
+	//FrameLayout LayoutUserLoginScreen;
+	//LinearLayout LayoutCourseListScreen;
 	User u;
 	// Connection detector class
 	ConnectionDetector cd;
 
-	ListView CourseList;
-	ImageView imgProPic;
-	TextView tvUserFullName, tvRoleName;
+	//ListView CourseList;
+	//ImageView imgProPic;
+	//TextView tvUserFullName, tvRoleName;
 	SharedPreferences mSharedPreferences;
 	Editor mEditor;
 
@@ -66,22 +67,29 @@ public class MainActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_main);
 		SetActionBar();
-		Log.i("bef call frag", "Login frag");
+		
+		//Log.i("bef call frag", "Login frag");
 
-		Log.i("aftr call", "Login frag");
+		//Log.i("aftr call", "Login frag");
 
 		mSharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
 
-		if (!(mSharedPreferences.contains("Username") && mSharedPreferences
+		etUserName = (EditText) findViewById(R.id.etUsername); 
+		  etPassword =
+		  (EditText) findViewById(R.id.etPassword); 
+		
+		if ((mSharedPreferences.contains("Username") && mSharedPreferences
 				.contains("Password"))) 
 		{
-			Log.i("no data in pref", "ok");
+			Log.i("data in pref", "ok");
+			
+			etUserName.setText(mSharedPreferences.getString("Username", ""));
+			etPassword.setText(mSharedPreferences.getString("Password", ""));
 
-			UserLoginFragment sf = new UserLoginFragment();
-			getFragmentManager().beginTransaction()
-					.replace(R.id.frame_layout, sf).commit();
+			Intent i=new Intent(getApplicationContext(),UserCourseActivity.class);
+			startActivity(i);
 		}
-		else
+		/*else
 		{
 			Log.i("data in pref", "ok");
 			
@@ -96,40 +104,41 @@ public class MainActivity extends Activity {
 			
 			getFragmentManager().beginTransaction()
 					.replace(R.id.frame_layout, sf).commit();
-		}
+		}*/
 
-		/*
-		 * etUserName = (EditText) findViewById(R.id.etUsername); etPassword =
-		 * (EditText) findViewById(R.id.etPassword); btnUserLogin = (Button)
-		 * findViewById(R.id.btnLogin);
-		 * 
-		 * LayoutUserLoginScreen=(FrameLayout)findViewById(R.id.
-		 * LayoutUserLoginScreen);
-		 * LayoutCourseListScreen=(LinearLayout)findViewById
-		 * (R.id.LayoutCourseListScreen);
-		 * 
-		 * imgProPic=(ImageView)findViewById(R.id.imgUserProPic);
-		 * CourseList=(ListView)findViewById(R.id.lvCourseList);
-		 * tvUserFullName=(TextView)findViewById(R.id.tvUserFullName);
-		 * tvRoleName=(TextView)findViewById(R.id.tvUserRole);
-		 * 
-		 * // creating connection detector class instance cd = new
-		 * ConnectionDetector(getApplicationContext());
-		 * 
-		 * btnUserLogin.setOnClickListener(new OnClickListener() {
-		 * 
-		 * @Override public void onClick(View v) { // TODO Auto-generated method
-		 * stub UserLogin(v); } });
-		 */
+		
+		  
+		  btnUserLogin = (Button) findViewById(R.id.btnLogin);
+		  
+		  /*LayoutUserLoginScreen=(FrameLayout)findViewById(R.id.
+		  LayoutUserLoginScreen);
+		  LayoutCourseListScreen=(LinearLayout)findViewById
+		  (R.id.LayoutCourseListScreen);*/
+		  
+		 /* imgProPic=(ImageView)findViewById(R.id.imgUserProPic);
+		  CourseList=(ListView)findViewById(R.id.lvCourseList);
+		  tvUserFullName=(TextView)findViewById(R.id.tvUserFullName);
+		  tvRoleName=(TextView)findViewById(R.id.tvUserRole);*/
+		  
+		  // creating connection detector class instance 
+		  cd = new ConnectionDetector(getApplicationContext());
+		  
+		  btnUserLogin.setOnClickListener(new OnClickListener() {
+		  
+		 @Override public void onClick(View v) 
+		 { // TODO Auto-generated method stub 
+		  UserLogin(v); 
+		  } 
+		 });
+		 
 	}
 
 	public void SetActionBar() {
 		mActionBar = getActionBar();
-		// mActionBar.setDisplayShowHomeEnabled(false);
 		mActionBar.setDisplayShowTitleEnabled(true);
 		mActionBar.setBackgroundDrawable(new ColorDrawable(Color
 				.parseColor("#FFB917")));
-		// mActionBar.setTitle("Login");
+		mActionBar.setTitle("Login");
 	}
 
 	public void UserLogin(View v) {
@@ -219,11 +228,32 @@ public class MainActivity extends Activity {
 		protected void onPostExecute(Void result) {
 			setProgressBarIndeterminateVisibility(Boolean.FALSE);
 			if (flagResponse == true) {
-				LayoutUserLoginScreen.setVisibility(View.GONE);
-				LayoutCourseListScreen.setVisibility(View.VISIBLE);
+				//LayoutUserLoginScreen.setVisibility(View.GONE);
+				//LayoutCourseListScreen.setVisibility(View.VISIBLE);
 
-				tvUserFullName.setText(u.getFull_name());
-				tvRoleName.setText(u.getRole_short_name());
+				//tvUserFullName.setText(u.getFull_name());
+				//tvRoleName.setText(u.getRole_short_name());
+				
+				mEditor = mSharedPreferences.edit();
+				
+				mEditor.putString("Username", uname);
+				mEditor.putString("Password", pwd);
+				
+				mEditor.putString("user_id", u.getId());
+				mEditor.putString("user_token", u.getToken());
+				mEditor.putString("user_fullname", u.getFull_name());
+				mEditor.putString("user_propic_url", u.getProfile_pic_url());
+				mEditor.putString("user_role_name", u.getRole_short_name());
+				mEditor.commit();
+				
+				//Bundle b=new Bundle();
+				
+				Intent i=new Intent(getApplicationContext(),UserCourseActivity.class);
+				//b.putParcelable("user", u);
+				//i.putExtras(b);
+				
+				Log.i("pass","ok");
+				startActivity(i);
 
 			} else if (flagResponse == false) {
 				openAlert("Login Incorrect",
@@ -294,7 +324,7 @@ public class MainActivity extends Activity {
 
 	}
 
-	@Override
+/*	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
@@ -311,5 +341,5 @@ public class MainActivity extends Activity {
 			return true;
 		}
 		return super.onOptionsItemSelected(item);
-	}
+	}*/
 }

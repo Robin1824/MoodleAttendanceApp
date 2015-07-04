@@ -5,12 +5,12 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     tools:context="com.example.moodleattendanceapp.MainActivity" >
-<!--  
+  
     <FrameLayout
         android:id="@+id/LayoutUserLoginScreen"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:background="#92CCE4"
+        android:background="#D3CFDF"
         android:orientation="vertical"
          >
 
@@ -141,5 +141,4 @@
             </ListView>
         </LinearLayout>
     </LinearLayout>
--->
 </FrameLayout>

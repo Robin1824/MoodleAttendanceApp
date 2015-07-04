@@ -178,6 +178,7 @@ public class UserLoginFragment extends Fragment {
 				b.putString("user_role_name", u.getRole_short_name());
 				b.putString("user_propic_url", u.getProfile_pic_url());
 				sf.setArguments(b);
+				
 
 				getFragmentManager().beginTransaction()
 						.replace(R.id.frame_layout, sf).addToBackStack(null)
