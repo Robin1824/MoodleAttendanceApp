@@ -2,6 +2,7 @@ package com.example.moodleattendanceapp;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -13,7 +14,7 @@ import android.os.Parcelable;
 
 public class User extends JSONObject implements Parcelable
 {
-    private ArrayList<Course> course;
+    private ArrayList<Course> course=new ArrayList<Course>();
 
     private String id;
     
@@ -68,6 +69,12 @@ public class User extends JSONObject implements Parcelable
     	{
     		id=obj.getString("id");
     		token=obj.getString("token");
+    		JSONArray coursesArr=obj.getJSONArray("course");
+    		for(int i=0;i<coursesArr.length();i++)
+    		{
+    			Course a=new Course(coursesArr.getJSONObject(i));
+    			course.add(a);
+    		}
     		profile_pic_url=obj.getString("profile_pic_url");
     		first_name=obj.getString("first_name");
     		user_name=obj.getString("user_name");

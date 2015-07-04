@@ -1,5 +1,7 @@
 package com.example.moodleattendanceapp;
 
+import java.util.ArrayList;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -45,6 +47,7 @@ public class UserCourseActivity extends Activity {
 	Editor mEditor;
 	
 	private String[] mPlanetTitles;
+	ArrayList<String> list = new ArrayList<String>();
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -59,11 +62,15 @@ public class UserCourseActivity extends Activity {
 		
 		 int loader = R.drawable.ic_launcher;
 		 Log.i("get pass ok","ok");
-		/* Bundle b=getIntent().getExtras();
-			User u=b.getParcelable("user");
+			//User u=getIntent().getParcelableExtra("user");
+		 	Bundle b=getIntent().getExtras();
+		 	
+			ArrayList<Course> courses;
+			courses=b.getParcelableArrayList("courses");
+			user_propic_url=b.getString("user_propic_url");
 			Log.i("get pass aftr","ok");			
-			Log.i("moodle",""+ u.getId());
-			Log.i("get pass print","ok");*/
+			Log.i("moodle",""+ courses.size());
+			Log.i("get pass print","ok");
 			
 			
 			mSharedPreferences = getSharedPreferences(
@@ -76,7 +83,7 @@ public class UserCourseActivity extends Activity {
 				token=mSharedPreferences.getString("user_token", "");
 				user_fullname=mSharedPreferences.getString("user_fullname", "");
 				user_role_name=mSharedPreferences.getString("user_role_name", "");
-				user_propic_url=mSharedPreferences.getString("user_propic_url", "");
+				//user_propic_url=mSharedPreferences.getString("user_propic_url", "");
 			}
 		 
 		// user_id=getArguments().getString("user_id");
@@ -107,16 +114,23 @@ public class UserCourseActivity extends Activity {
 	       imgLoader.DisplayImage(user_propic_url, loader, imgProPic);
 			
 	       
-	       AsyncCallWS task = new AsyncCallWS();
-	       task.execute("");
+	     //  AsyncCallWS task = new AsyncCallWS();
+	      // task.execute("");
 	       
-	        mPlanetTitles = getResources().getStringArray(R.array.CountryArray);
+	       // mPlanetTitles = getResources().getStringArray(R.array.CountryArray);
 	        
 			Log.i("call course","course frag");
 			
-			CourseList.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
-					android.R.layout.simple_list_item_1, mPlanetTitles));
+		//	CourseList.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
+			//		android.R.layout.simple_list_item_1, mPlanetTitles));
 		 
+			for(int i=0;i<courses.size();i++)
+			{
+				list.add(courses.get(i).getFull_name());				
+			}
+			CourseList.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
+							android.R.layout.simple_list_item_1, list));
+			
 	}
 	public void SetActionBar() {
 		mActionBar = getActionBar();
@@ -185,10 +199,10 @@ public class UserCourseActivity extends Activity {
 			Log.v("response info : ", "Hello My Res : " + response);
 			
 			if (response.indexOf("error") == -1) {
-				JSONObject UserLogin=new JSONObject(response);
+				JSONObject c=new JSONObject(response);
+
 				
-				Course c=new Course(UserLogin);
-				Log.i("fnm",""+c.getId());
+				//Log.i("fnm",""+c.getId());
 				flagResponse = true;
 				Log.v("end fetchJson()", "Hello run ok");
 			} else {

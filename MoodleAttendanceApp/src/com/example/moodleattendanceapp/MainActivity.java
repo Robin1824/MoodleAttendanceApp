@@ -78,7 +78,7 @@ public class MainActivity extends Activity {
 		  etPassword =
 		  (EditText) findViewById(R.id.etPassword); 
 		
-		if ((mSharedPreferences.contains("Username") && mSharedPreferences
+		/*if ((mSharedPreferences.contains("Username") && mSharedPreferences
 				.contains("Password"))) 
 		{
 			Log.i("data in pref", "ok");
@@ -89,7 +89,7 @@ public class MainActivity extends Activity {
 			Intent i=new Intent(getApplicationContext(),UserCourseActivity.class);
 			startActivity(i);
 		}
-		/*else
+*/		/*else
 		{
 			Log.i("data in pref", "ok");
 			
@@ -246,13 +246,14 @@ public class MainActivity extends Activity {
 				mEditor.putString("user_role_name", u.getRole_short_name());
 				mEditor.commit();
 				
-				//Bundle b=new Bundle();
-				
+				Bundle b=new Bundle();
+				b.putParcelableArrayList("courses", u.getCourse());
+				b.putString("user_propic_url", u.getProfile_pic_url());
 				Intent i=new Intent(getApplicationContext(),UserCourseActivity.class);
 				//b.putParcelable("user", u);
-				//i.putExtras(b);
+				i.putExtras(b);
 				
-				Log.i("pass","ok");
+				Log.i("pass","ok"+u.getFull_name());
 				startActivity(i);
 
 			} else if (flagResponse == false) {
