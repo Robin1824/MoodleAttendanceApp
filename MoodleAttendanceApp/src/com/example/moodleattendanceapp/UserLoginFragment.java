@@ -1,7 +1,5 @@
 package com.example.moodleattendanceapp;
 
-import java.net.URL;
-
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -9,29 +7,20 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
-
-import android.app.ActionBar;
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -40,105 +29,61 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class MainActivity extends Activity {
+public class UserLoginFragment extends Fragment {
 
-	ActionBar mActionBar;
 	EditText etUserName, etPassword;
 	Button btnUserLogin;
 	String uname = "", pwd = "", response = "";
-	//Fragment fragment_UserCourse = null;
+
 	// flag for Internet connection status
 	Boolean isInternetPresent = false, flagResponse = false;
-	//FrameLayout LayoutUserLoginScreen;
-	//LinearLayout LayoutCourseListScreen;
 	User u;
 	// Connection detector class
 	ConnectionDetector cd;
 
-	//ListView CourseList;
-	//ImageView imgProPic;
-	//TextView tvUserFullName, tvRoleName;
+	// SharePreferences for Store Username and Password
 	SharedPreferences mSharedPreferences;
 	Editor mEditor;
 
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-		setContentView(R.layout.activity_main);
-		SetActionBar();
+	public View onCreateView(LayoutInflater inflater, ViewGroup container,
+			Bundle savedInstanceState) {
+		// TODO Auto-generated method stub
+		View rootView = inflater.inflate(R.layout.user_login_fragment,
+				container, false);
+
+		getActivity().getActionBar().setTitle("Login");
+
+		etUserName = (EditText) rootView.findViewById(R.id.etUsername);
+		etPassword = (EditText) rootView.findViewById(R.id.etPassword);
+		btnUserLogin = (Button) rootView.findViewById(R.id.btnLogin);
+
+		cd = new ConnectionDetector(getActivity());
 		
-		//Log.i("bef call frag", "Login frag");
+		mSharedPreferences = getActivity().getSharedPreferences(
+				"Login", Context.MODE_PRIVATE);
 
-		//Log.i("aftr call", "Login frag");
-
-		mSharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
-
-		etUserName = (EditText) findViewById(R.id.etUsername); 
-		  etPassword =
-		  (EditText) findViewById(R.id.etPassword); 
-		
-		/*if ((mSharedPreferences.contains("Username") && mSharedPreferences
+		if ((mSharedPreferences.contains("Username") && mSharedPreferences
 				.contains("Password"))) 
 		{
-			Log.i("data in pref", "ok");
-			
 			etUserName.setText(mSharedPreferences.getString("Username", ""));
 			etPassword.setText(mSharedPreferences.getString("Password", ""));
-
-			Intent i=new Intent(getApplicationContext(),UserCourseActivity.class);
-			startActivity(i);
 		}
-*/		/*else
-		{
-			Log.i("data in pref", "ok");
-			
-			Bundle b=new Bundle();
-			UserCourseFragment sf = new UserCourseFragment();
-			b.putString("user_id","0");
-			b.putString("user_fullname", "1");
-			b.putString("user_role_name", "2");
-			b.putString("user_propic_url", "http://rutvik.ddns.net//pluginfile.php//119//user//icon//f1");
-			sf.setArguments(b);
-			
-			
-			getFragmentManager().beginTransaction()
-					.replace(R.id.frame_layout, sf).commit();
-		}*/
 
-		
-		  
-		  btnUserLogin = (Button) findViewById(R.id.btnLogin);
-		  
-		  /*LayoutUserLoginScreen=(FrameLayout)findViewById(R.id.
-		  LayoutUserLoginScreen);
-		  LayoutCourseListScreen=(LinearLayout)findViewById
-		  (R.id.LayoutCourseListScreen);*/
-		  
-		 /* imgProPic=(ImageView)findViewById(R.id.imgUserProPic);
-		  CourseList=(ListView)findViewById(R.id.lvCourseList);
-		  tvUserFullName=(TextView)findViewById(R.id.tvUserFullName);
-		  tvRoleName=(TextView)findViewById(R.id.tvUserRole);*/
-		  
-		  // creating connection detector class instance 
-		  cd = new ConnectionDetector(getApplicationContext());
-		  
-		  btnUserLogin.setOnClickListener(new OnClickListener() {
-		  
-		 @Override public void onClick(View v) 
-		 { // TODO Auto-generated method stub 
-		  UserLogin(v); 
-		  } 
-		 });
-		 
-	}
+		btnUserLogin.setOnClickListener(new OnClickListener() {
 
-	public void SetActionBar() {
-		mActionBar = getActionBar();
-		mActionBar.setDisplayShowTitleEnabled(true);
-		mActionBar.setBackgroundDrawable(new ColorDrawable(Color
-				.parseColor("#FFB917")));
-		mActionBar.setTitle("Login");
+			// creating connection detector class instance
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				UserLogin(v);
+				Log.i("Click", "Login frag");
+
+			}
+		});
+
+		return rootView;
 	}
 
 	public void UserLogin(View v) {
@@ -166,20 +111,6 @@ public class MainActivity extends Activity {
 				openAlert("No Internet Connection",
 						"You don't have internet connection.");
 			}
-
-			/*
-			 * uname = et_Uname.getText().toString().toUpperCase(); pwd =
-			 * et_pwd.getText().toString();
-			 */
-
-			/*
-			 * mEditor.putString("URL", url); mEditor.putString("Username",
-			 * uname); mEditor.putString("Password", pwd);
-			 * mEditor.putString("OrgName", orgname); mEditor.putString("OrgID",
-			 * orgid); mEditor.commit();
-			 */
-			Log.i("orgid save", "ok");
-
 		} else {
 			if (isEmpty(etUserName)) {
 				etUserName.setHint("Enter Username");
@@ -197,7 +128,7 @@ public class MainActivity extends Activity {
 
 	private void openAlert(String mTitle, String msg) {
 		AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-				MainActivity.this);
+				getActivity());
 
 		alertDialogBuilder.setTitle(mTitle);
 		alertDialogBuilder.setMessage(msg);
@@ -226,36 +157,32 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Void result) {
-			setProgressBarIndeterminateVisibility(Boolean.FALSE);
+			getActivity().setProgressBarIndeterminateVisibility(Boolean.FALSE);
 			if (flagResponse == true) {
-				//LayoutUserLoginScreen.setVisibility(View.GONE);
-				//LayoutCourseListScreen.setVisibility(View.VISIBLE);
 
-				//tvUserFullName.setText(u.getFull_name());
-				//tvRoleName.setText(u.getRole_short_name());
-				
+				mSharedPreferences = getActivity().getSharedPreferences(
+						"Login", Context.MODE_PRIVATE);
 				mEditor = mSharedPreferences.edit();
-				
 				mEditor.putString("Username", uname);
 				mEditor.putString("Password", pwd);
-				
-				mEditor.putString("user_id", u.getId());
-				mEditor.putString("user_token", u.getToken());
-				mEditor.putString("user_fullname", u.getFull_name());
-				mEditor.putString("user_propic_url", u.getProfile_pic_url());
-				mEditor.putString("user_role_name", u.getRole_short_name());
 				mEditor.commit();
-				
-				Bundle b=new Bundle();
-				b.putParcelableArrayList("courses", u.getCourse());
-				b.putString("user_propic_url", u.getProfile_pic_url());
-				Intent i=new Intent(getApplicationContext(),UserCourseActivity.class);
-				//b.putParcelable("user", u);
-				i.putExtras(b);
-				
-				Log.i("pass","ok"+u.getFull_name());
-				startActivity(i);
 
+				Log.i("orgid save", "ok");
+
+				Bundle b = new Bundle();
+
+				UserCourseFragment sf = new UserCourseFragment();
+
+				b.putString("user_id", u.getId());
+				b.putString("user_fullname", u.getFull_name());
+				b.putString("user_role_name", u.getRole_short_name());
+				b.putString("user_propic_url", u.getProfile_pic_url());
+				sf.setArguments(b);
+				
+
+				getFragmentManager().beginTransaction()
+						.replace(R.id.frame_layout, sf).addToBackStack(null)
+						.commit();
 			} else if (flagResponse == false) {
 				openAlert("Login Incorrect",
 						"Please enter correct Username and Password");
@@ -264,7 +191,7 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected void onPreExecute() {
-			setProgressBarIndeterminateVisibility(Boolean.TRUE);
+			getActivity().setProgressBarIndeterminateVisibility(Boolean.TRUE);
 		}
 	}
 
@@ -325,22 +252,4 @@ public class MainActivity extends Activity {
 
 	}
 
-/*	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}*/
 }
