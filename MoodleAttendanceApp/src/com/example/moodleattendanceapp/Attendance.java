@@ -15,13 +15,19 @@ public class Attendance extends JSONObject implements Parcelable
 {
     private String id;
 
-    private ArrayList<Sessions> sessions=new ArrayList<>();
+
+
+    private ArrayList<Sessions> sessions=new ArrayList<Sessions>();
+
 
     private String name;
 
     private String grade;
 
-    private ArrayList<Statuses> statuses=new ArrayList<>();
+
+
+    private ArrayList<Statuses> statuses=new ArrayList<Statuses>();
+
     
     public Attendance(Parcel p)
     {
