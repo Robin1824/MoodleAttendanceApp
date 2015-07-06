@@ -17,6 +17,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -37,6 +38,9 @@ public class UserCourseActivity extends Activity {
 	String user_id,user_fullname,user_role_name,user_propic_url,token;
 	Boolean isInternetPresent = false, flagResponse = false;
 	Course c[];
+	public UserCourseActivity CustomListView = null;
+	CourseListAdapter adapter;
+	Resources res;
 	
 	// Connection detector class
 	ConnectionDetector cd;
@@ -48,6 +52,7 @@ public class UserCourseActivity extends Activity {
 	
 	private String[] mPlanetTitles;
 	ArrayList<String> list = new ArrayList<String>();
+	ArrayList<Course> courses;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,13 +65,18 @@ public class UserCourseActivity extends Activity {
 		tvUserFullName=(TextView)findViewById(R.id.tvUserFullName);
 		tvRoleName=(TextView)findViewById(R.id.tvUserRole);
 		
+		CustomListView = this;
+		res = getResources();
+		
 		 int loader = R.drawable.ic_launcher;
 		 Log.i("get pass ok","ok");
 			//User u=getIntent().getParcelableExtra("user");
 		 	Bundle b=getIntent().getExtras();
 		 	
-			ArrayList<Course> courses;
+		 	
+			
 			courses=b.getParcelableArrayList("courses");
+			
 			user_propic_url=b.getString("user_propic_url");
 			Log.i("get pass aftr","ok");			
 			Log.i("moodle",""+ courses.size());
@@ -124,13 +134,17 @@ public class UserCourseActivity extends Activity {
 		//	CourseList.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
 			//		android.R.layout.simple_list_item_1, mPlanetTitles));
 		 
-			for(int i=0;i<courses.size();i++)
+			/*for(int i=0;i<courses.size();i++)
 			{
 				list.add(courses.get(i).getFull_name());				
 			}
 			CourseList.setAdapter(new ArrayAdapter<String>(getApplicationContext(),
-							android.R.layout.simple_list_item_1, list));
+							android.R.layout.simple_list_item_1, list));*/
 			
+			adapter = new CourseListAdapter(CustomListView, courses,
+					res);
+			
+			CourseList.setAdapter(adapter);
 	}
 	public void SetActionBar() {
 		mActionBar = getActionBar();
@@ -219,6 +233,18 @@ public class UserCourseActivity extends Activity {
 		 * readAndParseJSON(response); }
 		 */
 
+	}
+	
+	public void onItemClick(int mPosition) {
+		Course tempValues = (Course) courses
+				.get(mPosition);
+		Log.i("id and full name", "id : " + tempValues.getId()+"& fnm :"+ tempValues.getFull_name());
+		/*
+		 * Intent i=new
+		 * Intent(getApplicationContext(),NotificationWR_Detail.class);
+		 * i.putExtra("NotificationID",tempValues.getNotificationID());
+		 * startActivity(i);
+		 */
 	}
 	
 	private void openAlert(String mTitle, String msg) {

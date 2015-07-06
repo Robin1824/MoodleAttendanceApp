@@ -34,19 +34,26 @@ public final class R {
         public static final int my_edit_text_selected=0x7f020006;
         public static final int my_edit_text_whole=0x7f020007;
         public static final int propic_image_border=0x7f020008;
+        public static final int right_arrow_128=0x7f020009;
+        public static final int right_arrow_256=0x7f02000a;
+        public static final int right_arrow_32=0x7f02000b;
+        public static final int right_arrow_48=0x7f02000c;
+        public static final int right_arrow_64=0x7f02000d;
     }
     public static final class id {
         public static final int LayoutCourseListScreen=0x7f090006;
         public static final int LayoutUserLoginScreen=0x7f090001;
-        public static final int action_settings=0x7f09000c;
+        public static final int action_settings=0x7f09000e;
         public static final int btnLogin=0x7f090005;
         public static final int etPassword=0x7f090004;
         public static final int etUsername=0x7f090003;
         public static final int frame_layout=0x7f090000;
         public static final int imageView1=0x7f090002;
+        public static final int imgNextArrow=0x7f09000d;
         public static final int imgUserProPic=0x7f090007;
         public static final int lvCourseList=0x7f09000b;
         public static final int tvCourse=0x7f09000a;
+        public static final int tvCourseFullName=0x7f09000c;
         public static final int tvUserFullName=0x7f090008;
         public static final int tvUserRole=0x7f090009;
     }
@@ -54,8 +61,9 @@ public final class R {
         public static final int activity_about_us=0x7f030000;
         public static final int activity_main=0x7f030001;
         public static final int activity_user_course=0x7f030002;
-        public static final int user_course_fragment=0x7f030003;
-        public static final int user_login_fragment=0x7f030004;
+        public static final int course_list_cell_design=0x7f030003;
+        public static final int user_course_fragment=0x7f030004;
+        public static final int user_login_fragment=0x7f030005;
     }
     public static final class menu {
         public static final int about_us=0x7f080000;

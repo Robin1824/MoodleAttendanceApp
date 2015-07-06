@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -61,10 +62,13 @@ public class MainActivity extends Activity {
 	SharedPreferences mSharedPreferences;
 	Editor mEditor;
 
+	 // Progress Dialog Object
+    ProgressDialog prgDialog;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_main);
 		SetActionBar();
 		
@@ -78,7 +82,7 @@ public class MainActivity extends Activity {
 		  etPassword =
 		  (EditText) findViewById(R.id.etPassword); 
 		
-		/*if ((mSharedPreferences.contains("Username") && mSharedPreferences
+		if ((mSharedPreferences.contains("Username") && mSharedPreferences
 				.contains("Password"))) 
 		{
 			Log.i("data in pref", "ok");
@@ -86,10 +90,10 @@ public class MainActivity extends Activity {
 			etUserName.setText(mSharedPreferences.getString("Username", ""));
 			etPassword.setText(mSharedPreferences.getString("Password", ""));
 
-			Intent i=new Intent(getApplicationContext(),UserCourseActivity.class);
-			startActivity(i);
+			//Intent i=new Intent(getApplicationContext(),UserCourseActivity.class);
+			//startActivity(i);
 		}
-*/		/*else
+		/*else
 		{
 			Log.i("data in pref", "ok");
 			
@@ -106,8 +110,13 @@ public class MainActivity extends Activity {
 					.replace(R.id.frame_layout, sf).commit();
 		}*/
 
-		
-		  
+		  // Instantiate Progress Dialog object
+	        prgDialog = new ProgressDialog(this);
+	     // Set Progress Dialog Text
+	        prgDialog.setMessage("Please wait...");
+	        // Set Cancelable as False
+	        prgDialog.setCancelable(false);
+	        
 		  btnUserLogin = (Button) findViewById(R.id.btnLogin);
 		  
 		  /*LayoutUserLoginScreen=(FrameLayout)findViewById(R.id.
@@ -130,7 +139,6 @@ public class MainActivity extends Activity {
 		  UserLogin(v); 
 		  } 
 		 });
-		 
 	}
 
 	public void SetActionBar() {
@@ -226,7 +234,8 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Void result) {
-			setProgressBarIndeterminateVisibility(Boolean.FALSE);
+			prgDialog.hide();
+			//setProgressBarIndeterminateVisibility(Boolean.FALSE);
 			if (flagResponse == true) {
 				//LayoutUserLoginScreen.setVisibility(View.GONE);
 				//LayoutCourseListScreen.setVisibility(View.VISIBLE);
@@ -264,7 +273,8 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected void onPreExecute() {
-			setProgressBarIndeterminateVisibility(Boolean.TRUE);
+			prgDialog.show();
+			//setProgressBarIndeterminateVisibility(Boolean.TRUE);
 		}
 	}
 
