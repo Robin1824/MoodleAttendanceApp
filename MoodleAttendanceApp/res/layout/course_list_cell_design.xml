@@ -1,18 +1,26 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="10dp"
-    android:layout_gravity="center_horizontal" >
+    android:layout_gravity="center_horizontal" 
+    android:orientation="vertical">
 
+     <FrameLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginRight="10dp" >
+    
     <TextView
         android:id="@+id/tvCourseFullName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:text="All Lifts"
+        android:text="Database Management System"
         android:textColor="#585858"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:layout_gravity="top|left"/>
 
     <ImageView
@@ -20,6 +28,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/right_arrow_32"
-        android:layout_gravity="top|right" />
-
-</FrameLayout>
+        android:layout_gravity="top|right" 
+        android:contentDescription="Next Arrow image view"/>
+    
+    </FrameLayout>
+    
+    <!--  View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#585858" />-->
+</LinearLayout>

@@ -34,12 +34,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -47,98 +49,102 @@ public class MainActivity extends Activity {
 	EditText etUserName, etPassword;
 	Button btnUserLogin;
 	String uname = "", pwd = "", response = "";
-	//Fragment fragment_UserCourse = null;
+	// Fragment fragment_UserCourse = null;
 	// flag for Internet connection status
 	Boolean isInternetPresent = false, flagResponse = false;
-	//FrameLayout LayoutUserLoginScreen;
-	//LinearLayout LayoutCourseListScreen;
+	// FrameLayout LayoutUserLoginScreen;
+	// LinearLayout LayoutCourseListScreen;
 	User u;
 	// Connection detector class
 	ConnectionDetector cd;
 
-	//ListView CourseList;
-	//ImageView imgProPic;
-	//TextView tvUserFullName, tvRoleName;
+	// ListView CourseList;
+	// ImageView imgProPic;
+	// TextView tvUserFullName, tvRoleName;
 	SharedPreferences mSharedPreferences;
 	Editor mEditor;
 
-	 // Progress Dialog Object
-    ProgressDialog prgDialog;
-	
+	CheckBox cbRememberMe;
+	// Progress Dialog Object
+	ProgressDialog prgDialog;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_main);
 		SetActionBar();
-		
-		//Log.i("bef call frag", "Login frag");
 
-		//Log.i("aftr call", "Login frag");
+		// Log.i("bef call frag", "Login frag");
+
+		// Log.i("aftr call", "Login frag");
 
 		mSharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
 
-		etUserName = (EditText) findViewById(R.id.etUsername); 
-		  etPassword =
-		  (EditText) findViewById(R.id.etPassword); 
-		
+		etUserName = (EditText) findViewById(R.id.etUsername);
+		etPassword = (EditText) findViewById(R.id.etPassword);
+
+		cbRememberMe = (CheckBox) findViewById(R.id.cbRememberMe);
+
 		if ((mSharedPreferences.contains("Username") && mSharedPreferences
-				.contains("Password"))) 
-		{
+				.contains("Password"))) {
 			Log.i("data in pref", "ok");
-			
+
 			etUserName.setText(mSharedPreferences.getString("Username", ""));
 			etPassword.setText(mSharedPreferences.getString("Password", ""));
 
-			//Intent i=new Intent(getApplicationContext(),UserCourseActivity.class);
-			//startActivity(i);
+			// Intent i=new
+			// Intent(getApplicationContext(),UserCourseActivity.class);
+			// startActivity(i);
 		}
-		/*else
-		{
-			Log.i("data in pref", "ok");
-			
-			Bundle b=new Bundle();
-			UserCourseFragment sf = new UserCourseFragment();
-			b.putString("user_id","0");
-			b.putString("user_fullname", "1");
-			b.putString("user_role_name", "2");
-			b.putString("user_propic_url", "http://rutvik.ddns.net//pluginfile.php//119//user//icon//f1");
-			sf.setArguments(b);
-			
-			
-			getFragmentManager().beginTransaction()
-					.replace(R.id.frame_layout, sf).commit();
-		}*/
+		/*
+		 * else { Log.i("data in pref", "ok");
+		 * 
+		 * Bundle b=new Bundle(); UserCourseFragment sf = new
+		 * UserCourseFragment(); b.putString("user_id","0");
+		 * b.putString("user_fullname", "1"); b.putString("user_role_name",
+		 * "2"); b.putString("user_propic_url",
+		 * "http://rutvik.ddns.net//pluginfile.php//119//user//icon//f1");
+		 * sf.setArguments(b);
+		 * 
+		 * 
+		 * getFragmentManager().beginTransaction() .replace(R.id.frame_layout,
+		 * sf).commit(); }
+		 */
 
-		  // Instantiate Progress Dialog object
-	        prgDialog = new ProgressDialog(this);
-	     // Set Progress Dialog Text
-	        prgDialog.setMessage("Please wait...");
-	        // Set Cancelable as False
-	        prgDialog.setCancelable(false);
-	        
-		  btnUserLogin = (Button) findViewById(R.id.btnLogin);
-		  
-		  /*LayoutUserLoginScreen=(FrameLayout)findViewById(R.id.
-		  LayoutUserLoginScreen);
-		  LayoutCourseListScreen=(LinearLayout)findViewById
-		  (R.id.LayoutCourseListScreen);*/
-		  
-		 /* imgProPic=(ImageView)findViewById(R.id.imgUserProPic);
-		  CourseList=(ListView)findViewById(R.id.lvCourseList);
-		  tvUserFullName=(TextView)findViewById(R.id.tvUserFullName);
-		  tvRoleName=(TextView)findViewById(R.id.tvUserRole);*/
-		  
-		  // creating connection detector class instance 
-		  cd = new ConnectionDetector(getApplicationContext());
-		  
-		  btnUserLogin.setOnClickListener(new OnClickListener() {
-		  
-		 @Override public void onClick(View v) 
-		 { // TODO Auto-generated method stub 
-		  UserLogin(v); 
-		  } 
-		 });
+		// Instantiate Progress Dialog object
+		prgDialog = new ProgressDialog(this);
+		// Set Progress Dialog Text
+		prgDialog.setMessage("Please wait...");
+		// Set Cancelable as False
+		prgDialog.setCancelable(false);
+
+		btnUserLogin = (Button) findViewById(R.id.btnLogin);
+
+		/*
+		 * LayoutUserLoginScreen=(FrameLayout)findViewById(R.id.
+		 * LayoutUserLoginScreen);
+		 * LayoutCourseListScreen=(LinearLayout)findViewById
+		 * (R.id.LayoutCourseListScreen);
+		 */
+
+		/*
+		 * imgProPic=(ImageView)findViewById(R.id.imgUserProPic);
+		 * CourseList=(ListView)findViewById(R.id.lvCourseList);
+		 * tvUserFullName=(TextView)findViewById(R.id.tvUserFullName);
+		 * tvRoleName=(TextView)findViewById(R.id.tvUserRole);
+		 */
+
+		// creating connection detector class instance
+		cd = new ConnectionDetector(getApplicationContext());
+
+		btnUserLogin.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) { // TODO Auto-generated method stub
+				UserLogin(v);
+			}
+		});
 	}
 
 	public void SetActionBar() {
@@ -235,34 +241,38 @@ public class MainActivity extends Activity {
 		@Override
 		protected void onPostExecute(Void result) {
 			prgDialog.hide();
-			//setProgressBarIndeterminateVisibility(Boolean.FALSE);
+			// setProgressBarIndeterminateVisibility(Boolean.FALSE);
 			if (flagResponse == true) {
-				//LayoutUserLoginScreen.setVisibility(View.GONE);
-				//LayoutCourseListScreen.setVisibility(View.VISIBLE);
+				// LayoutUserLoginScreen.setVisibility(View.GONE);
+				// LayoutCourseListScreen.setVisibility(View.VISIBLE);
 
-				//tvUserFullName.setText(u.getFull_name());
-				//tvRoleName.setText(u.getRole_short_name());
-				
-				mEditor = mSharedPreferences.edit();
-				
-				mEditor.putString("Username", uname);
-				mEditor.putString("Password", pwd);
-				
-				mEditor.putString("user_id", u.getId());
-				mEditor.putString("user_token", u.getToken());
-				mEditor.putString("user_fullname", u.getFull_name());
-				mEditor.putString("user_propic_url", u.getProfile_pic_url());
-				mEditor.putString("user_role_name", u.getRole_short_name());
-				mEditor.commit();
-				
-				Bundle b=new Bundle();
+				// tvUserFullName.setText(u.getFull_name());
+				// tvRoleName.setText(u.getRole_short_name());
+				if (cbRememberMe.isChecked()) {
+
+					mEditor = mSharedPreferences.edit();
+
+					mEditor.putString("Username", uname);
+					mEditor.putString("Password", pwd);
+				}
+				/*
+				 * mEditor.putString("user_id", u.getId());
+				 * mEditor.putString("user_token", u.getToken());
+				 * mEditor.putString("user_fullname", u.getFull_name());
+				 * mEditor.putString("user_propic_url", u.getProfile_pic_url());
+				 * mEditor.putString("user_role_name", u.getRole_short_name());
+				 * mEditor.commit();
+				 */
+
+				Bundle b = new Bundle();
 				b.putParcelableArrayList("courses", u.getCourse());
 				b.putString("user_propic_url", u.getProfile_pic_url());
-				Intent i=new Intent(getApplicationContext(),UserCourseActivity.class);
-				//b.putParcelable("user", u);
+				Intent i = new Intent(getApplicationContext(),
+						UserCourseActivity.class);
+				// b.putParcelable("user", u);
 				i.putExtras(b);
-				
-				Log.i("pass","ok"+u.getFull_name());
+
+				Log.i("pass", "ok" + u.getFull_name());
 				startActivity(i);
 
 			} else if (flagResponse == false) {
@@ -274,7 +284,7 @@ public class MainActivity extends Activity {
 		@Override
 		protected void onPreExecute() {
 			prgDialog.show();
-			//setProgressBarIndeterminateVisibility(Boolean.TRUE);
+			// setProgressBarIndeterminateVisibility(Boolean.TRUE);
 		}
 	}
 
@@ -335,22 +345,16 @@ public class MainActivity extends Activity {
 
 	}
 
-/*	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}*/
+	/*
+	 * @Override public boolean onCreateOptionsMenu(Menu menu) { // Inflate the
+	 * menu; this adds items to the action bar if it is present.
+	 * getMenuInflater().inflate(R.menu.main, menu); return true; }
+	 * 
+	 * @Override public boolean onOptionsItemSelected(MenuItem item) { // Handle
+	 * action bar item clicks here. The action bar will // automatically handle
+	 * clicks on the Home/Up button, so long // as you specify a parent activity
+	 * in AndroidManifest.xml. int id = item.getItemId(); if (id ==
+	 * R.id.action_settings) { return true; } return
+	 * super.onOptionsItemSelected(item); }
+	 */
 }

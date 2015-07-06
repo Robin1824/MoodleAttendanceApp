@@ -67,10 +67,10 @@
 
         <ListView
             android:id="@+id/lvCourseList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
             android:divider="#585858"
-            android:dividerHeight="1px" >
+            android:dividerHeight="1dp" >
         </ListView>
     </LinearLayout>
 
