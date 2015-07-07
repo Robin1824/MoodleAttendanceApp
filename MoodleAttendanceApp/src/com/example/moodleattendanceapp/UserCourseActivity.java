@@ -18,6 +18,8 @@ import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -41,7 +43,7 @@ public class UserCourseActivity extends Activity {
 	public UserCourseActivity CustomListView = null;
 	CourseListAdapter adapter;
 	Resources res;
-	
+	RoundImage roundedImage;
 	// Connection detector class
 	ConnectionDetector cd;
 	
@@ -114,14 +116,18 @@ public class UserCourseActivity extends Activity {
 			//user_propic_url = getArguments().getString("user_propic_url");
 			
 			 //ImageLoader class instance
-	        ImageLoader imgLoader = new ImageLoader(getApplicationContext());
+	      //  ImageLoader imgLoader = new ImageLoader(getApplicationContext());
 	        
 	        // whenever you want to load an image from url
 	        // call DisplayImage function
 	        // url - image url to load
 	        // loader - loader image, will be displayed before getting image
 	        // image - ImageView 
-	       imgLoader.DisplayImage(user_propic_url, loader, imgProPic);
+	       //imgLoader.DisplayImage(user_propic_url, loader, imgProPic);
+	       
+	       Bitmap bm = BitmapFactory.decodeResource(getResources(),R.drawable.f1);
+           roundedImage = new RoundImage(bm);
+           imgProPic.setImageDrawable(roundedImage);
 			
 	       
 	     //  AsyncCallWS task = new AsyncCallWS();

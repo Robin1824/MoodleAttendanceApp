@@ -254,18 +254,21 @@ public class MainActivity extends Activity {
 
 					mEditor.putString("Username", uname);
 					mEditor.putString("Password", pwd);
+				
+					  mEditor.putString("user_id", u.getId());
+					  mEditor.putString("user_token", u.getToken());
+					  mEditor.putString("user_fullname", u.getFull_name());
+					  mEditor.putString("user_propic_url", u.getProfile_pic_url());
+					  mEditor.putString("user_role_name", u.getRole_short_name());
+					  mEditor.commit();
 				}
-				/*
-				 * mEditor.putString("user_id", u.getId());
-				 * mEditor.putString("user_token", u.getToken());
-				 * mEditor.putString("user_fullname", u.getFull_name());
-				 * mEditor.putString("user_propic_url", u.getProfile_pic_url());
-				 * mEditor.putString("user_role_name", u.getRole_short_name());
-				 * mEditor.commit();
-				 */
+				
+				  
+				 
 
 				Bundle b = new Bundle();
 				b.putParcelableArrayList("courses", u.getCourse());
+				
 				b.putString("user_propic_url", u.getProfile_pic_url());
 				Intent i = new Intent(getApplicationContext(),
 						UserCourseActivity.class);

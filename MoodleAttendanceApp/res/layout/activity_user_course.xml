@@ -16,7 +16,6 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_marginLeft="10dp"
-            android:background="@+drawable/propic_image_border"
             android:contentDescription="Profile image"
             android:cropToPadding="true"
             android:padding="1dp"
