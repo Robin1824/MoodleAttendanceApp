@@ -18,6 +18,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,12 +40,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -52,7 +55,8 @@ public class MainActivity extends Activity {
 	EditText etUserName, etPassword;
 	Button btnUserLogin;
 	String uname = "", pwd = "", response = "";
-	//Fragment fragment_UserCourse = null;
+	
+	// Fragment fragment_UserCourse = null;
 	// flag for Internet connection status
 <<<<<<< HEAD
     Boolean isInternetPresent = false;
@@ -63,17 +67,26 @@ public class MainActivity extends Activity {
     String json="{\"attendance\":{\"id\":\"1\",\"name\":\"Attendance\",\"grade\":\"0\",\"sessions\":[{\"id\":\"1\",\"groupid\":\"0\",\"sessdate\":\"1434429000\",\"duration\":\"3600\",\"lasttaken\":\"1434629027\",\"lasttakenby\":\"78\",\"timemodified\":\"1434461465\",\"description\":\"Regularclasssession\",\"descriptionformat\":\"1\",\"studentscanmark\":\"0\"},{\"id\":\"2\",\"groupid\":\"0\",\"sessdate\":\"1434515400\",\"duration\":\"3600\",\"lasttaken\":\"1434491052\",\"lasttakenby\":\"78\",\"timemodified\":\"1434461465\",\"description\":\"Regularclasssession\",\"descriptionformat\":\"1\",\"studentscanmark\":\"0\"}],\"statuses\":[{\"id\":\"5\",\"acronym\":\"P\",\"description\":\"Present\",\"grade\":\"2\",\"visible\":\"1\",\"deleted\":\"0\"},{\"id\":\"6\",\"acronym\":\"A\",\"description\":\"Absent\",\"grade\":\"0\",\"visible\":\"1\",\"deleted\":\"0\"},{\"id\":\"7\",\"acronym\":\"L\",\"description\":\"Late\",\"grade\":\"1\",\"visible\":\"0\",\"deleted\":\"0\"},{\"id\":\"8\",\"acronym\":\"E\",\"description\":\"Excused\",\"grade\":\"1\",\"visible\":\"0\",\"deleted\":\"0\"}]}}";
 =======
 	Boolean isInternetPresent = false, flagResponse = false;
-	//FrameLayout LayoutUserLoginScreen;
-	//LinearLayout LayoutCourseListScreen;
+	// FrameLayout LayoutUserLoginScreen;
+	// LinearLayout LayoutCourseListScreen;
 	User u;
+	
 	// Connection detector class
 	ConnectionDetector cd;
 
-	//ListView CourseList;
-	//ImageView imgProPic;
-	//TextView tvUserFullName, tvRoleName;
+	// ListView CourseList;
+	// ImageView imgProPic;
+	// TextView tvUserFullName, tvRoleName;
 	SharedPreferences mSharedPreferences;
 	Editor mEditor;
+<<<<<<< HEAD
+>>>>>>> refs/remotes/origin/master
+=======
+
+	CheckBox cbRememberMe;
+	
+	// Progress Dialog Object
+	ProgressDialog prgDialog;
 >>>>>>> refs/remotes/origin/master
 
     Attendance a=null;
@@ -81,9 +94,10 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		// requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_main);
 		SetActionBar();
+<<<<<<< HEAD
 		
 <<<<<<< HEAD
 		// creating connection detector class instance
@@ -107,8 +121,12 @@ public class MainActivity extends Activity {
 =======
 		//Log.i("bef call frag", "Login frag");
 >>>>>>> refs/remotes/origin/master
+=======
+>>>>>>> refs/remotes/origin/master
 
-		//Log.i("aftr call", "Login frag");
+		// Log.i("bef call frag", "Login frag");
+
+		// Log.i("aftr call", "Login frag");
 
 <<<<<<< HEAD
 			@Override
@@ -136,38 +154,38 @@ public class MainActivity extends Activity {
 =======
 		mSharedPreferences = getSharedPreferences("Login", Context.MODE_PRIVATE);
 
-		etUserName = (EditText) findViewById(R.id.etUsername); 
-		  etPassword =
-		  (EditText) findViewById(R.id.etPassword); 
-		
-		/*if ((mSharedPreferences.contains("Username") && mSharedPreferences
-				.contains("Password"))) 
-		{
+		etUserName = (EditText) findViewById(R.id.etUsername);
+		etPassword = (EditText) findViewById(R.id.etPassword);
+
+		cbRememberMe = (CheckBox) findViewById(R.id.cbRememberMe);
+
+		if ((mSharedPreferences.contains("Username") && mSharedPreferences
+				.contains("Password"))) {
 			Log.i("data in pref", "ok");
-			
+
 			etUserName.setText(mSharedPreferences.getString("Username", ""));
 			etPassword.setText(mSharedPreferences.getString("Password", ""));
 
-			Intent i=new Intent(getApplicationContext(),UserCourseActivity.class);
-			startActivity(i);
+			// Intent i=new
+			// Intent(getApplicationContext(),UserCourseActivity.class);
+			// startActivity(i);
 		}
-*/		/*else
-		{
-			Log.i("data in pref", "ok");
-			
-			Bundle b=new Bundle();
-			UserCourseFragment sf = new UserCourseFragment();
-			b.putString("user_id","0");
-			b.putString("user_fullname", "1");
-			b.putString("user_role_name", "2");
-			b.putString("user_propic_url", "http://rutvik.ddns.net//pluginfile.php//119//user//icon//f1");
-			sf.setArguments(b);
-			
-			
-			getFragmentManager().beginTransaction()
-					.replace(R.id.frame_layout, sf).commit();
-		}*/
+		/*
+		 * else { Log.i("data in pref", "ok");
+		 * 
+		 * Bundle b=new Bundle(); UserCourseFragment sf = new
+		 * UserCourseFragment(); b.putString("user_id","0");
+		 * b.putString("user_fullname", "1"); b.putString("user_role_name",
+		 * "2"); b.putString("user_propic_url",
+		 * "http://rutvik.ddns.net//pluginfile.php//119//user//icon//f1");
+		 * sf.setArguments(b);
+		 * 
+		 * 
+		 * getFragmentManager().beginTransaction() .replace(R.id.frame_layout,
+		 * sf).commit(); }
+		 */
 
+<<<<<<< HEAD
 		
 		  
 		  btnUserLogin = (Button) findViewById(R.id.btnLogin);
@@ -193,6 +211,41 @@ public class MainActivity extends Activity {
 		  } 
 		 });
 		 
+>>>>>>> refs/remotes/origin/master
+=======
+		// Instantiate Progress Dialog object
+		prgDialog = new ProgressDialog(this);
+		// Set Progress Dialog Text
+		prgDialog.setMessage("Please wait...");
+		// Set Cancelable as False
+		prgDialog.setCancelable(false);
+
+		btnUserLogin = (Button) findViewById(R.id.btnLogin);
+
+		/*
+		 * LayoutUserLoginScreen=(FrameLayout)findViewById(R.id.
+		 * LayoutUserLoginScreen);
+		 * LayoutCourseListScreen=(LinearLayout)findViewById
+		 * (R.id.LayoutCourseListScreen);
+		 */
+
+		/*
+		 * imgProPic=(ImageView)findViewById(R.id.imgUserProPic);
+		 * CourseList=(ListView)findViewById(R.id.lvCourseList);
+		 * tvUserFullName=(TextView)findViewById(R.id.tvUserFullName);
+		 * tvRoleName=(TextView)findViewById(R.id.tvUserRole);
+		 */
+
+		// creating connection detector class instance
+		cd = new ConnectionDetector(getApplicationContext());
+
+		btnUserLogin.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) { // TODO Auto-generated method stub
+				UserLogin(v);
+			}
+		});
 >>>>>>> refs/remotes/origin/master
 	}
 
@@ -220,6 +273,13 @@ public class MainActivity extends Activity {
 				uname = etUserName.getText().toString();
 				pwd = etPassword.getText().toString();
 
+/*				try{
+				response=new Moodle(MainActivity.this).execute("0",uname,pwd).get();
+				Log.i("response in main",""+response);
+				}catch(Exception e)
+				{
+					
+				}*/
 				AsyncCallWS task = new AsyncCallWS();
 				task.execute("");
 
@@ -289,34 +349,57 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected void onPostExecute(Void result) {
-			setProgressBarIndeterminateVisibility(Boolean.FALSE);
+			prgDialog.hide();
+			// setProgressBarIndeterminateVisibility(Boolean.FALSE);
 			if (flagResponse == true) {
-				//LayoutUserLoginScreen.setVisibility(View.GONE);
-				//LayoutCourseListScreen.setVisibility(View.VISIBLE);
+				// LayoutUserLoginScreen.setVisibility(View.GONE);
+				// LayoutCourseListScreen.setVisibility(View.VISIBLE);
 
-				//tvUserFullName.setText(u.getFull_name());
-				//tvRoleName.setText(u.getRole_short_name());
+				// tvUserFullName.setText(u.getFull_name());
+				// tvRoleName.setText(u.getRole_short_name());
+				if (cbRememberMe.isChecked()) {
+
+					mEditor = mSharedPreferences.edit();
+
+					mEditor.putString("Username", uname);
+					mEditor.putString("Password", pwd);
 				
-				mEditor = mSharedPreferences.edit();
+					  mEditor.putString("user_id", u.getId());
+					  mEditor.putString("user_token", u.getToken());
+					  mEditor.putString("user_fullname", u.getFull_name());
+					  mEditor.putString("user_propic_url", u.getProfile_pic_url());
+					  mEditor.putString("user_role_name", u.getRole_short_name());
+					  mEditor.commit();
+				}
+				/*else
+				{
+					mEditor = mSharedPreferences.edit();
+
+					mEditor.putString("Username", null);
+					mEditor.putString("Password", null);
 				
-				mEditor.putString("Username", uname);
-				mEditor.putString("Password", pwd);
+					  mEditor.putString("user_id", null);
+					  mEditor.putString("user_token", null);
+					  mEditor.putString("user_fullname", null);
+					  mEditor.putString("user_propic_url", null);
+					  mEditor.putString("user_role_name", null);
+					  mEditor.commit();
+				}*/
 				
-				mEditor.putString("user_id", u.getId());
-				mEditor.putString("user_token", u.getToken());
-				mEditor.putString("user_fullname", u.getFull_name());
-				mEditor.putString("user_propic_url", u.getProfile_pic_url());
-				mEditor.putString("user_role_name", u.getRole_short_name());
-				mEditor.commit();
+				  
+				 
+
+				Bundle b = new Bundle();
 				
-				Bundle b=new Bundle();
 				b.putParcelableArrayList("courses", u.getCourse());
-				b.putString("user_propic_url", u.getProfile_pic_url());
-				Intent i=new Intent(getApplicationContext(),UserCourseActivity.class);
-				//b.putParcelable("user", u);
-				i.putExtras(b);
 				
-				Log.i("pass","ok"+u.getFull_name());
+				b.putString("user_propic_url", u.getProfile_pic_url());
+				Intent i = new Intent(getApplicationContext(),
+						UserCourseActivity.class);
+				// b.putParcelable("user", u);
+				i.putExtras(b);
+
+				Log.i("pass", "ok" + u.getFull_name());
 				startActivity(i);
 
 			} else if (flagResponse == false) {
@@ -327,7 +410,8 @@ public class MainActivity extends Activity {
 
 		@Override
 		protected void onPreExecute() {
-			setProgressBarIndeterminateVisibility(Boolean.TRUE);
+			prgDialog.show();
+			// setProgressBarIndeterminateVisibility(Boolean.TRUE);
 		}
 	}
 
@@ -388,22 +472,16 @@ public class MainActivity extends Activity {
 
 	}
 
-/*	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		// Handle action bar item clicks here. The action bar will
-		// automatically handle clicks on the Home/Up button, so long
-		// as you specify a parent activity in AndroidManifest.xml.
-		int id = item.getItemId();
-		if (id == R.id.action_settings) {
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}*/
+	/*
+	 * @Override public boolean onCreateOptionsMenu(Menu menu) { // Inflate the
+	 * menu; this adds items to the action bar if it is present.
+	 * getMenuInflater().inflate(R.menu.main, menu); return true; }
+	 * 
+	 * @Override public boolean onOptionsItemSelected(MenuItem item) { // Handle
+	 * action bar item clicks here. The action bar will // automatically handle
+	 * clicks on the Home/Up button, so long // as you specify a parent activity
+	 * in AndroidManifest.xml. int id = item.getItemId(); if (id ==
+	 * R.id.action_settings) { return true; } return
+	 * super.onOptionsItemSelected(item); }
+	 */
 }

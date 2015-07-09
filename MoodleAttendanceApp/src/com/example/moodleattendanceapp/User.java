@@ -22,15 +22,11 @@ import android.os.Parcelable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-
-
 public class User extends JSONObject implements Parcelable
 {
 
 
     private ArrayList<Course> course=new ArrayList<Course>();
-
-
 
     private String id;
     
