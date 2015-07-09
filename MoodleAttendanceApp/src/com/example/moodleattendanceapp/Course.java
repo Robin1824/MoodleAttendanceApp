@@ -27,6 +27,11 @@ public class Course extends JSONObject implements Parcelable
 
     private String full_name;
     
+    public Course()
+    {
+    	
+    }
+    
     public Course(Parcel p)
     {
     	id=p.readString();
