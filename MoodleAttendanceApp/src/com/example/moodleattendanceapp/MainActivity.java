@@ -49,12 +49,14 @@ public class MainActivity extends Activity {
 	EditText etUserName, etPassword;
 	Button btnUserLogin;
 	String uname = "", pwd = "", response = "";
+	
 	// Fragment fragment_UserCourse = null;
 	// flag for Internet connection status
 	Boolean isInternetPresent = false, flagResponse = false;
 	// FrameLayout LayoutUserLoginScreen;
 	// LinearLayout LayoutCourseListScreen;
 	User u;
+	
 	// Connection detector class
 	ConnectionDetector cd;
 
@@ -65,6 +67,7 @@ public class MainActivity extends Activity {
 	Editor mEditor;
 
 	CheckBox cbRememberMe;
+	
 	// Progress Dialog Object
 	ProgressDialog prgDialog;
 
@@ -171,6 +174,13 @@ public class MainActivity extends Activity {
 				uname = etUserName.getText().toString();
 				pwd = etPassword.getText().toString();
 
+/*				try{
+				response=new Moodle(MainActivity.this).execute("0",uname,pwd).get();
+				Log.i("response in main",""+response);
+				}catch(Exception e)
+				{
+					
+				}*/
 				AsyncCallWS task = new AsyncCallWS();
 				task.execute("");
 
@@ -262,11 +272,26 @@ public class MainActivity extends Activity {
 					  mEditor.putString("user_role_name", u.getRole_short_name());
 					  mEditor.commit();
 				}
+				/*else
+				{
+					mEditor = mSharedPreferences.edit();
+
+					mEditor.putString("Username", null);
+					mEditor.putString("Password", null);
+				
+					  mEditor.putString("user_id", null);
+					  mEditor.putString("user_token", null);
+					  mEditor.putString("user_fullname", null);
+					  mEditor.putString("user_propic_url", null);
+					  mEditor.putString("user_role_name", null);
+					  mEditor.commit();
+				}*/
 				
 				  
 				 
 
 				Bundle b = new Bundle();
+				
 				b.putParcelableArrayList("courses", u.getCourse());
 				
 				b.putString("user_propic_url", u.getProfile_pic_url());
