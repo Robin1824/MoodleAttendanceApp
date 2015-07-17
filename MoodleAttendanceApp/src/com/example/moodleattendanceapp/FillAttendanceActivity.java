@@ -7,6 +7,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.moodleattendanceapp.R.id;
+
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -19,6 +21,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -42,15 +46,12 @@ public class FillAttendanceActivity extends Activity {
 	
 	ActionBar mActionBar;
 	
-	ArrayList<EnrolledStudents> students=new ArrayList<EnrolledStudents>();
-	
-	//ArrayList<AttendanceData> attendanceData=new ArrayList<AttendanceData>();
-	
 	HashMap<String, AttendanceData> attendanceDataMap=new HashMap<String, AttendanceData>();
 	
-	//ArrayList<PostAttendanceData> postAttendanceData=new ArrayList<PostAttendanceData>();
+	ArrayList<String> ids=new ArrayList<String>();
+
 	
-	HashMap<String, PostAttendanceData> postAttendanceDataMap=new HashMap<String, PostAttendanceData>();
+	Menu menu;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -74,10 +75,7 @@ public class FillAttendanceActivity extends Activity {
 		lvAttendanceData=(ListView) findViewById(R.id.lvAttendanceDataList);
 		
 		swipeRefreshLayout=(SwipeRefreshLayout) findViewById(R.id.attendanceSwipeContainer);
-		
 
-		students=GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getEnrolledStudents();
-		
 		
 		try
 		{
@@ -132,7 +130,7 @@ public class FillAttendanceActivity extends Activity {
 								{
 									AttendanceData ad=new AttendanceData(j.getJSONObject(i));
 									attendanceDataMap.put(ad.getId(), ad);
-									postAttendanceDataMap.put(ad.getId(), new PostAttendanceData(ad.getId(), ad.getAcronym(), ad.getRemarks()));
+									//postAttendanceDataMap.put(ad.getId(), new PostAttendanceData(ad.getId(), ad.getAcronym(), ad.getRemarks()));
 								}
 								
 								attendanceDataListAdapter.notifyDataSetChanged();
@@ -166,6 +164,45 @@ public class FillAttendanceActivity extends Activity {
 		
 		
 	}
+	
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		
+		getMenuInflater().inflate(R.menu.fill_attendance_menu, menu);
+		
+		this.menu=menu;
+		
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		
+		switch(item.getItemId())
+		{
+		
+			case R.id.action_save_attendance:
+				
+				return true;
+				
+			case R.id.action_set_all_present:
+				
+				
+				
+				return true;
+				
+			case R.id.action_set_all_absent:
+				
+				return true;
+		
+		
+		}
+		
+		return super.onOptionsItemSelected(item);
+	}
+	
 	
 	public void SetActionBar() {
 		mActionBar = getActionBar();
@@ -228,7 +265,9 @@ public class FillAttendanceActivity extends Activity {
 						{
 							AttendanceData ad=new AttendanceData(j.getJSONObject(i));
 							attendanceDataMap.put(ad.getId(), ad);
-							postAttendanceDataMap.put(ad.getId(), new PostAttendanceData(ad.getId(), ad.getAcronym(), ad.getRemarks()));
+							ids.add(ad.getId());
+							
+							//postAttendanceDataMap.put(ad.getId(), new PostAttendanceData(ad.getId(), ad.getAcronym(), ad.getRemarks()));
 						}
 					
 					}
@@ -236,7 +275,7 @@ public class FillAttendanceActivity extends Activity {
 					
 					//success=true;
 					
-					attendanceDataListAdapter=new AttendanceDataListAdapter(context, students);
+					attendanceDataListAdapter=new AttendanceDataListAdapter(context, attendanceDataMap, ids);
 					
 					lvAttendanceData.setAdapter(attendanceDataListAdapter);
 					
@@ -247,13 +286,14 @@ public class FillAttendanceActivity extends Activity {
 					
 					Log.i("MAA", "Inside Catch!!");
 					
-					for(EnrolledStudents s:students)
+					for(EnrolledStudents s:GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getEnrolledStudents())
 					{
 						Log.i("MAA", s.getFirst_name());
-						postAttendanceDataMap.put(s.getUser_id(), new PostAttendanceData(s.getUser_id(), GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getStatuses().get(0).getAcronym(), ""));
+						ids.add(s.getUser_id());
+						attendanceDataMap.put(s.getUser_id(), new AttendanceData(s.getUser_id(), GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getStatuses().get(0).getAcronym(), "",s.getFirst_name(),s.getLast_name()));
 					}
 					
-					attendanceDataListAdapter=new AttendanceDataListAdapter(context, students);
+					attendanceDataListAdapter=new AttendanceDataListAdapter(context, attendanceDataMap, ids);
 					
 					lvAttendanceData.setAdapter(attendanceDataListAdapter);
 					
@@ -270,24 +310,23 @@ public class FillAttendanceActivity extends Activity {
 	class AttendanceDataListAdapter extends BaseAdapter
 	{
 		
-		ArrayList<EnrolledStudents> enrolledStudents=new ArrayList<EnrolledStudents>();
+		//ArrayList<EnrolledStudents> enrolledStudents=new ArrayList<EnrolledStudents>();
+		
+		
+		
+		HashMap<String,AttendanceData> attendanceDataMap=new HashMap<String,AttendanceData>();
+		
+		ArrayList<String> ids=new ArrayList<String>();
 	
-		ArrayList<String> radioStatus=new ArrayList<String>();
+		//ArrayList<String> radioStatus=new ArrayList<String>();
 		
 		Context context;
 		
-		public AttendanceDataListAdapter(Context context,ArrayList<EnrolledStudents> enrolledStudents) {
+		public AttendanceDataListAdapter(Context context,HashMap<String,AttendanceData> attendanceDataMap,ArrayList<String> ids) {
 			
 			this.context=context;
-			this.enrolledStudents=enrolledStudents;
-			
-			for(EnrolledStudents e:enrolledStudents)
-			{
-				//PostAttendanceData a=new PostAttendanceData(e.getUser_id(), "", "");
-				//postAttendanceDataMap.put(a.getId(), a);
-				Log.i("MAA", "*status: "+postAttendanceDataMap.get(e.getUser_id()).status);
-				radioStatus.add(postAttendanceDataMap.get(e.getUser_id()).status);
-			}
+			this.attendanceDataMap=attendanceDataMap;
+			this.ids=ids;
 			
 		}
 		
@@ -361,19 +400,19 @@ public class FillAttendanceActivity extends Activity {
 		@Override
 		public int getCount() {
 			
-			return enrolledStudents.size();
+			return attendanceDataMap.size();
 		}
 
 		@Override
 		public Object getItem(int arg0) {
 			
-			return enrolledStudents.get(arg0);
+			return attendanceDataMap.get(arg0);
 		}
 
 		@Override
 		public long getItemId(int arg0) {
 			// TODO Auto-generated method stub
-			return enrolledStudents.get(arg0).hashCode();
+			return arg0;
 		}
 
 		@Override
@@ -413,33 +452,33 @@ public class FillAttendanceActivity extends Activity {
 			   
 			   
 
-			   holder.tvStudentFullName.setText(enrolledStudents.get(position).getFull_name());
+			   holder.tvStudentFullName.setText(attendanceDataMap.get(ids.get(position)).getFirst_name());
 			   
 			   holder.radioGroup.setOnCheckedChangeListener(null);
 			   
 			   String acronym=GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getStatuses().get(0).getAcronym();
 			   
-			   if(radioStatus.get(position).equals(acronym))
+			   if(attendanceDataMap.get(ids.get(position)).getAcronym().equals(acronym))
 			   {
-				   holder.rb.getByAcronym(radioStatus.get(position)).setChecked(true);
-				   Log.i("MAA", "checking in if radioStatus at pos "+position +" is "+radioStatus.get(position));
+				   holder.rb.getByAcronym(attendanceDataMap.get(ids.get(position)).getAcronym()).setChecked(true);
+				   Log.i("MAA", "checking in if radioStatus at pos "+position +" is "+attendanceDataMap.get(ids.get(position)));
 				   
 			   }
 			   else
 			   {
-				   Log.i("MAA", "checking in else radioStatus at pos "+position +" is "+radioStatus.get(position));
-				   holder.rb.getByAcronym(radioStatus.get(position)).setChecked(true);
+				   Log.i("MAA", "checking in else radioStatus at pos "+position +" is "+attendanceDataMap.get(ids.get(position)));
+				   holder.rb.getByAcronym(attendanceDataMap.get(ids.get(position)).getAcronym()).setChecked(true);
 			   }
 			   
 			   
-			   if(radioStatus.get(position).equals("P") || radioStatus.get(position).equals("L"))
+			   if(attendanceDataMap.get(ids.get(position)).getAcronym().equals("P") || attendanceDataMap.get(ids.get(position)).getAcronym().equals("L"))
 			   {
 				   holder.radioGroup.setBackgroundColor(Color.parseColor("#8BC34A"));
 				   holder.tvStudentFullName.setBackgroundColor(Color.parseColor("#8BC34A"));
 			   }
 			   else
 			   {
-				   if(radioStatus.get(position).equals("A"))
+				   if(attendanceDataMap.get(ids.get(position)).getAcronym().equals("A"))
 				   {
 					   holder.radioGroup.setBackgroundColor(Color.parseColor("#F44336"));
 					   holder.tvStudentFullName.setBackgroundColor(Color.parseColor("#F44336"));
@@ -461,11 +500,13 @@ public class FillAttendanceActivity extends Activity {
 						RadioButton rb=(RadioButton) findViewById(checkedId);
 						Statuses s=(Statuses) rb.getTag();
 						
-						radioStatus.set(pos, s.getAcronym());
+						//radioStatus.set(pos, s.getAcronym());
+						
+						attendanceDataMap.get(ids.get(pos)).setAcronym(s.getAcronym());
 						
 						Log.i("MAA", "id: "+s.getId()+" description: "+s.getDescription());
 						
-						postAttendanceDataMap.get(students.get(pos).getUser_id()).setStatus(s.getId());						
+						//postAttendanceDataMap.get(students.get(pos).getUser_id()).setStatus(s.getId());						
 						
 						
 						if(s.getAcronym().equals("P") || s.getAcronym().equals("L"))
@@ -488,8 +529,8 @@ public class FillAttendanceActivity extends Activity {
 						   }
 						
 						
-						Log.i("MAA", "(present) id: "+postAttendanceDataMap.get(students.get(pos).getUser_id()).getId()+" status:"+postAttendanceDataMap.get(students.get(pos).getUser_id()).getStatus());
-						Log.i("MAA", "radio status: "+radioStatus.get(pos));
+						//Log.i("MAA", "(present) id: "+postAttendanceDataMap.get(students.get(pos).getUser_id()).getId()+" status:"+postAttendanceDataMap.get(students.get(pos).getUser_id()).getStatus());
+						//Log.i("MAA", "radio status: "+radioStatus.get(pos));
 						//Log.i("MAA", "{\"d\":"+AttendanceData.toJSON(attendanceData)+"}");
 						
 					}

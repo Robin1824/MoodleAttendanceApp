@@ -9,7 +9,7 @@ import org.json.JSONObject;
 public class PostAttendanceData {
 	
 	
-	String id,status,remark;
+	String id,status,remark,full_name;
 	
 	public PostAttendanceData(String id,String status,String remark) {
 		setId(id);
