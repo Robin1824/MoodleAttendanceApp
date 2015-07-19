@@ -17,9 +17,9 @@ public class ServiceHandler {
 	
 	static String response = null;
     
-    //private String host="http://192.168.1.100/webservice.php?";		//Local
+    private String host="http://192.168.1.100/webservice.php?";		//Local
     
-    private String host="http://rutvik.ddns.net/webservice.php?";		//Internet
+    //private String host="http://rutvik.ddns.net/webservice.php?";		//Internet
 
     
 	ServiceHandler()

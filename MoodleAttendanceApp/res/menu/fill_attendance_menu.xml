@@ -7,15 +7,8 @@
     
     <item android:id="@+id/action_save_attendance"
           android:icon="@drawable/checkmark_128"
-          android:title="Save"
+          android:title="Save Attendance"
           android:showAsAction="always"/>
 
-   <item android:id="@+id/action_set_all_present"
-       	android:title="All Present"
-          android:showAsAction="never"/>
-   
-    <item android:id="@+id/action_set_all_absent"
-       	android:title="All Absent"
-          android:showAsAction="never"/>
 
 </menu>

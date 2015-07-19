@@ -11,8 +11,10 @@ import com.example.moodleattendanceapp.R.id;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -25,12 +27,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class FillAttendanceActivity extends Activity {
 	
@@ -49,9 +55,48 @@ public class FillAttendanceActivity extends Activity {
 	HashMap<String, AttendanceData> attendanceDataMap=new HashMap<String, AttendanceData>();
 	
 	ArrayList<String> ids=new ArrayList<String>();
-
+	
+	RadioGroup rgAttendanceSelector;
 	
 	Menu menu;
+	
+	public void setAttendanceSelector(ArrayList<Statuses> s)
+	{
+		
+			rgAttendanceSelector.removeAllViews();
+		
+	
+			for(RadioButton r:generateSelectorRadioButtons(s))
+			{
+				rgAttendanceSelector.addView(r);
+			}
+		
+			//rgAttendanceSelector.clearCheck();
+		
+	}
+	
+	ArrayList<RadioButton> selectorRadioArrList=new ArrayList<RadioButton>();
+	
+	public ArrayList<RadioButton> generateSelectorRadioButtons(ArrayList<Statuses> statuses)
+	{
+		
+		for(Statuses s:statuses)
+		{
+			RadioButton r= new RadioButton(this);
+			
+			r.setText(s.getAcronym());
+			r.setTag(s);
+			RadioGroup.LayoutParams p = new RadioGroup.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+			p.weight = 1;
+			r.setLayoutParams(p);
+			r.setTextColor(Color.WHITE);
+			selectorRadioArrList.add(r);
+			
+		}
+		
+		return selectorRadioArrList;
+		
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +118,36 @@ public class FillAttendanceActivity extends Activity {
 		sessionId=getIntent().getStringExtra("session_id");		
 		
 		lvAttendanceData=(ListView) findViewById(R.id.lvAttendanceDataList);
+		
+		//lvAttendanceData.setItemsCanFocus(true);
+		
+		rgAttendanceSelector=(RadioGroup) findViewById(R.id.rgAttendanceSelector);
+		
+		
+		rgAttendanceSelector.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(RadioGroup group, int checkedId) {
+				try
+				{
+					RadioButton r=(RadioButton) findViewById(checkedId);
+					Statuses s=(Statuses) r.getTag();
+					
+					for(String id:ids)
+					{
+						attendanceDataMap.get(id).setAcronym(s.getAcronym());
+					}
+					
+					r.setChecked(false);
+					
+					attendanceDataListAdapter.notifyDataSetChanged();
+				}
+				catch (NullPointerException e) {
+					
+				}
+				
+			}
+		});
 		
 		swipeRefreshLayout=(SwipeRefreshLayout) findViewById(R.id.attendanceSwipeContainer);
 
@@ -186,16 +261,6 @@ public class FillAttendanceActivity extends Activity {
 			case R.id.action_save_attendance:
 				
 				return true;
-				
-			case R.id.action_set_all_present:
-				
-				
-				
-				return true;
-				
-			case R.id.action_set_all_absent:
-				
-				return true;
 		
 		
 		}
@@ -240,6 +305,7 @@ public class FillAttendanceActivity extends Activity {
 				ServiceHandler sh=new ServiceHandler();
 				response=sh.getAttendanceData(GlobalJSONObjects.getInstance().getUser().getToken(),sesId);
 				
+				
 				Log.i("MAA", " session id is: "+sesId+"");
 				Log.i("MAA", response);
 				
@@ -249,6 +315,9 @@ public class FillAttendanceActivity extends Activity {
 			@Override
 			protected void onPostExecute(Void result)
 			{
+
+				setAttendanceSelector(GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getStatuses());
+				
 				try
 				{
 					JSONObject obj=new JSONObject(response);
@@ -275,9 +344,7 @@ public class FillAttendanceActivity extends Activity {
 					
 					//success=true;
 					
-					attendanceDataListAdapter=new AttendanceDataListAdapter(context, attendanceDataMap, ids);
-					
-					lvAttendanceData.setAdapter(attendanceDataListAdapter);
+					setupListView(context, attendanceDataMap, ids);
 					
 					
 					
@@ -293,9 +360,7 @@ public class FillAttendanceActivity extends Activity {
 						attendanceDataMap.put(s.getUser_id(), new AttendanceData(s.getUser_id(), GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getStatuses().get(0).getAcronym(), "",s.getFirst_name(),s.getLast_name()));
 					}
 					
-					attendanceDataListAdapter=new AttendanceDataListAdapter(context, attendanceDataMap, ids);
-					
-					lvAttendanceData.setAdapter(attendanceDataListAdapter);
+					setupListView(context, attendanceDataMap, ids);
 					
 				}
 				
@@ -307,7 +372,18 @@ public class FillAttendanceActivity extends Activity {
 	}
 	
 	
-	class AttendanceDataListAdapter extends BaseAdapter
+	public void setupListView(Context context,HashMap<String,AttendanceData> attendanceDataMap,ArrayList<String> ids)
+	{
+		attendanceDataListAdapter=new AttendanceDataListAdapter(context, attendanceDataMap, ids);
+		
+		lvAttendanceData.setAdapter(attendanceDataListAdapter);
+		
+		//lvAttendanceData.setOnItemClickListener(null);
+		lvAttendanceData.setOnItemClickListener(attendanceDataListAdapter);
+	}
+	
+	
+	class AttendanceDataListAdapter extends BaseAdapter implements OnItemClickListener
 	{
 		
 		//ArrayList<EnrolledStudents> enrolledStudents=new ArrayList<EnrolledStudents>();
@@ -343,9 +419,10 @@ public class FillAttendanceActivity extends Activity {
 				for(Statuses s:statuses)
 				{
 					RadioButton r= new RadioButton(context);
-					
 					r.setText(s.getAcronym());
 					r.setTag(s);
+					r.setFocusable(false);
+					r.setFocusableInTouchMode(false);
 					RadioGroup.LayoutParams p = new RadioGroup.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 					p.weight = 1;
 					r.setLayoutParams(p);
@@ -439,14 +516,13 @@ public class FillAttendanceActivity extends Activity {
 				   holder.tvStudentFullName = (TextView) convertView.findViewById(R.id.tvStudentFullName);
 
 				   
-				   
 				   convertView.setTag(holder);
 				   
 			   
 			   } 
 			   else {
 				   
-			    holder = (ViewHolder) convertView.getTag();
+				   holder = (ViewHolder) convertView.getTag();
 			    
 			   }
 			   
@@ -539,6 +615,46 @@ public class FillAttendanceActivity extends Activity {
 			   return convertView;
 			 
 			  }
+
+		@Override
+		public void onItemClick(AdapterView<?> arg0, View arg1, int p,
+				long arg3) {
+			
+			Toast.makeText(context, "hiiiiii", Toast.LENGTH_SHORT).show();
+			
+			String fn="First Name: "+attendanceDataMap.get(ids.get(p)).getFirst_name();
+			String ln="Last Name: "+attendanceDataMap.get(ids.get(p)).getLast_name();
+			String as="Attendance Status: "+attendanceDataMap.get(ids.get(p)).getDescription();
+			String tb;
+			if(attendanceDataMap.get(ids.get(p)).getTaken_by()!=null)
+			{
+				tb="Taken By: "+attendanceDataMap.get(ids.get(p)).getTaken_by().getFirst_name()+" "+attendanceDataMap.get(ids.get(p)).getTaken_by().getLast_name();
+			}
+			else
+			{
+				tb="Taken By: none";
+			}
+			String rem="Remark: "+attendanceDataMap.get(ids.get(p)).getRemarks();
+			String t="Time Taken: "+attendanceDataMap.get(ids.get(p)).getTime_taken();
+			
+			AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(context);
+			dlgAlert.setMessage(fn+"\n\n"+ln+"\n\n"+as+"\n\n"+tb+"\n\n"+rem+"\n\n"+t);
+			dlgAlert.setTitle("Student Information");
+			dlgAlert.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					
+					dialog.dismiss();
+					
+				}
+			});
+			dlgAlert.setCancelable(true);
+			dlgAlert.create().show();
+			
+		}
+		
+		
 		
 	}
 	

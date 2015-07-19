@@ -114,6 +114,10 @@ public class AttendanceData
 
     public String getDescription ()
     {
+    	if(description==null)
+    	{
+    		return "none";
+    	}
         return description;
     }
 
@@ -134,6 +138,10 @@ public class AttendanceData
 
     public String getRemarks ()
     {
+    	if(remarks==null)
+    	{
+    		return "none";
+    	}
         return remarks;
     }
 
@@ -144,6 +152,10 @@ public class AttendanceData
 
     public String getTime_taken ()
     {
+    	if(time_taken==null)
+    	{
+    		return "none";
+    	}
         return time_taken;
     }
 

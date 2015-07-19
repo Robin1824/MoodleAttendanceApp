@@ -3,38 +3,27 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center_horizontal" 
-    android:orientation="vertical">
+    android:orientation="horizontal"
+    android:weightSum="2">
+    
 
-     <FrameLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginRight="10dp" >
-    
-    <TextView
-        android:id="@+id/tvCourseFullName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Database Management System"
-        android:textColor="#585858"
-        android:textSize="20sp"
-        android:layout_gravity="top|left"/>
+     <TextView
+         android:id="@+id/tvCourseFullName"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:text="test"
+         android:gravity="center_vertical"
+         android:layout_gravity="center_vertical"
+         android:textColor="#585858"
+         android:textSize="20sp"
+         android:layout_weight="1" />
 
-    <ImageView
-        android:id="@+id/imgNextArrow"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:src="@drawable/right_arrow_128"
-        android:layout_gravity="top|right" 
-        android:contentDescription="Next Arrow image view"/>
-    
-    </FrameLayout>
-    
-    <!--  View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#585858" />-->
+     <ImageView
+         android:id="@+id/imgNextArrow"
+         android:layout_width="40dp"
+         android:layout_height="40dp"
+         android:contentDescription="Next Arrow image view"
+         android:src="@drawable/right_arrow_128"
+         android:layout_weight="1" />
+
 </LinearLayout>
