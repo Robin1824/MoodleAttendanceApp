@@ -1,5 +1,11 @@
 package com.example.moodleattendanceapp;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.ref.WeakReference;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 import org.apache.http.HttpEntity;
@@ -16,6 +22,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Resources;
@@ -28,6 +35,8 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v4.widget.SwipeRefreshLayout.OnRefreshListener;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
@@ -38,9 +47,9 @@ import android.widget.Toast;
 public class UserCourseActivity extends Activity {
 
 	ListView CourseList;
-	ImageView imgProPic;
+	RoundedImageView imgProPic;
 	TextView tvUserFullName,tvSessions,tvEnrolledCourses;
-	String response = "";
+	//String response = "";
 	
 	String user_id,user_fullname,user_role_name,user_propic_url,token;
 	
@@ -49,9 +58,10 @@ public class UserCourseActivity extends Activity {
 	public UserCourseActivity CustomListView = null;
 	CourseListAdapter adapter;
 	Resources res;
-	RoundImage roundedImage;
+	
+	//RoundImage roundedImage;
 	// Connection detector class
-	ConnectionDetector cd;
+	//ConnectionDetector cd;
 	
 	SharedPreferences mSharedPreferences;
 	
@@ -66,6 +76,40 @@ public class UserCourseActivity extends Activity {
 	ArrayList<String> list = new ArrayList<String>();
 	ArrayList<Course> courses;
 	
+	
+	Menu menu;
+	
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		
+		getMenuInflater().inflate(R.menu.user_course_menu, menu);
+		
+		this.menu=menu;
+		
+		return super.onCreateOptionsMenu(menu);
+	}
+	
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		
+		switch(item.getItemId())
+		{
+			case R.id.action_show_settings:
+				
+				Intent i=new Intent(this,SettingsActivity.class);
+				
+				startActivity(i);
+				
+				return true;
+				
+			
+		}
+		
+		return super.onOptionsItemSelected(item);
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		SetActionBar();
@@ -73,10 +117,14 @@ public class UserCourseActivity extends Activity {
 		//requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_user_course);
 		
+		
+		
+		
+		
 		mSharedPreferences = getSharedPreferences("moodle_attendance_app_shared_pref", Context.MODE_PRIVATE);
 		
 		
-		imgProPic=(ImageView)findViewById(R.id.imgUserProPic);
+		imgProPic=(RoundedImageView)findViewById(R.id.imgUserProPic);
 		CourseList=(ListView)findViewById(R.id.lvCourseList);
 		tvUserFullName=(TextView)findViewById(R.id.tvUserFullName);
 		tvSessions=(TextView)findViewById(R.id.tvSessions);
@@ -91,73 +139,80 @@ public class UserCourseActivity extends Activity {
 	            	if(mSharedPreferences.contains("tmp_username") && mSharedPreferences.contains("tmp_password"))
 	            	{
 	            		
-	            	
-	            	
-		            	new AsyncTask<Void, Void, Void>(){
-							
-							String response="";
-							
-							Boolean success=false;
-	
-													
-							@Override
-							protected Void doInBackground(Void... params) {
+		            	if(ServiceHandler.hasActiveInternetConnection(UserCourseActivity.this))
+		            	{
+		            	
+			            	new AsyncTask<Void, Void, Void>(){
 								
-								ServiceHandler sh=new ServiceHandler();
-								response=sh.login(mSharedPreferences.getString("tmp_username", null), mSharedPreferences.getString("tmp_password", null));
-								return null;
+								String response="";
 								
-							}
-							
-							@Override
-							protected void onPostExecute(Void result) {
-								
-								try {
-									Log.i("MAA", response);
-									JSONObject obj=new JSONObject(response).getJSONObject("user");							
-									GlobalJSONObjects.getInstance().setUser(new User(obj));
-									Log.i("MAA",GlobalJSONObjects.getInstance().getUser().getFull_name());
-									success=true;
+								Boolean success=false;
+		
+														
+								@Override
+								protected Void doInBackground(Void... params) {
 									
-								} catch (JSONException e) {
-	
-									try {
-										ErrorObj errObj=new ErrorObj(response);
-										Toast.makeText(UserCourseActivity.this, errObj.getComment(), Toast.LENGTH_SHORT).show();
-									} catch (JSONException e1) {
-										Log.e("MAA", "error in processing ERROR JSON");
-										e1.printStackTrace();
-									}
-	
-									Log.e("MAA", "error in processing JSON");
-									e.printStackTrace();
-									
-								}				
-								
-								if(success)
-								{
-									
-									//Log.i("MAA", GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions().get(0).getSessionDate());
-									
-															
-									//sessionArrayList.addAll(GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions());
-									
-									//Log.i("MAA", "size is "+GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions().size()+"");
-									
-									adapter.notifyDataSetChanged();
-									
-									
+									ServiceHandler sh=new ServiceHandler();
+									response=sh.login(mSharedPreferences.getString("tmp_username", null), mSharedPreferences.getString("tmp_password", null));
+									return null;
 									
 								}
 								
-								//progressDialog.dismiss();
-								
-								swipeContainer.setRefreshing(false);
-	
-								
-							}
-						
-						}.execute();
+								@Override
+								protected void onPostExecute(Void result) {
+									
+									try {
+										Log.i("MAA", response);
+										JSONObject obj=new JSONObject(response).getJSONObject("user");							
+										GlobalJSONObjects.getInstance().setUser(new User(obj));
+										Log.i("MAA",GlobalJSONObjects.getInstance().getUser().getFull_name());
+										success=true;
+										
+									} catch (JSONException e) {
+		
+										try {
+											ErrorObj errObj=new ErrorObj(response);
+											Toast.makeText(UserCourseActivity.this, errObj.getComment(), Toast.LENGTH_SHORT).show();
+										} catch (JSONException e1) {
+											Log.e("MAA", "error in processing ERROR JSON");
+											e1.printStackTrace();
+										}
+		
+										Log.e("MAA", "error in processing JSON");
+										e.printStackTrace();
+										
+									}				
+									
+									if(success)
+									{
+										
+										//Log.i("MAA", GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions().get(0).getSessionDate());
+										
+																
+										//sessionArrayList.addAll(GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions());
+										
+										//Log.i("MAA", "size is "+GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions().size()+"");
+										
+										adapter.notifyDataSetChanged();
+										
+										
+										
+									}
+									
+									//progressDialog.dismiss();
+									
+									swipeContainer.setRefreshing(false);
+		
+									
+								}
+							
+							}.execute();
+							
+		            	}
+		            	else
+		            	{
+		            		Toast.makeText(UserCourseActivity.this, "Check Network Connection", 3000).show();
+		            	}
 					
 	            	}
 	            	
@@ -176,7 +231,7 @@ public class UserCourseActivity extends Activity {
 	
 		 Log.i("get pass ok","ok");
 			//User u=getIntent().getParcelableExtra("user");
-		 	Bundle b=getIntent().getExtras();
+		 	//Bundle b=getIntent().getExtras();
 		 	
 		 	
 			
@@ -222,9 +277,12 @@ public class UserCourseActivity extends Activity {
 	        // image - ImageView 
 	       //imgLoader.DisplayImage(user_propic_url, loader, imgProPic);
 	       
-	       Bitmap bm = BitmapFactory.decodeResource(getResources(),R.drawable.f1);
-           roundedImage = new RoundImage(bm);
-           imgProPic.setImageDrawable(roundedImage);
+	       //Bitmap bm = BitmapFactory.decodeResource(getResources(),R.drawable.f1);
+           //roundedImage = new RoundImage(bm);
+           imgProPic.setImageResource(R.drawable.f1);
+			
+			
+			loadBitmap(imgProPic, GlobalJSONObjects.getInstance().getUser().getProfile_pic_url());
 			
 	       
 	     //  AsyncCallWS task = new AsyncCallWS();
@@ -293,6 +351,65 @@ AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
 		
 	}
+	
+	public void loadBitmap(RoundedImageView imageView,String url) {
+	    BitmapWorkerTask task = new BitmapWorkerTask(imageView,url);
+	    task.execute();
+	}
+	
+	
+	class BitmapWorkerTask extends AsyncTask<Void, Void, Bitmap> {
+	    private final WeakReference<RoundedImageView> imageViewReference;
+	    //private int data = 0;
+	    private final String url;
+
+	    public BitmapWorkerTask(RoundedImageView imageView,String url) {
+	        // Use a WeakReference to ensure the ImageView can be garbage collected
+	    	this.url=url;
+	        imageViewReference = new WeakReference<RoundedImageView>(imageView);
+	    }
+
+	    // Decode image in background.
+	    @Override
+	    protected Bitmap doInBackground(Void... params) {
+	        //data = params[0];
+	        return download_Image(url);
+	    }
+
+	    // Once complete, see if ImageView is still around and set bitmap.
+	    @Override
+	    protected void onPostExecute(Bitmap bitmap) {
+	        if (imageViewReference != null && bitmap != null) {
+	            final RoundedImageView imageView = imageViewReference.get();
+	            if (imageView != null) {
+	            	//roundedImage = new RoundImage(bitmap);
+	                imageView.setImageBitmap(bitmap);
+	            }
+	        }
+	    }
+	}
+	
+	
+	
+	private Bitmap download_Image(String url) {
+	    //---------------------------------------------------
+	    Bitmap bm = null;
+	    try {
+	        URL aURL = new URL(url);
+	        URLConnection conn = aURL.openConnection();
+	        conn.connect();
+	        InputStream is = conn.getInputStream();
+	        BufferedInputStream bis = new BufferedInputStream(is);
+	        bm = BitmapFactory.decodeStream(bis);
+	        bis.close();
+	        is.close();
+	    } catch (IOException e) {
+	        Log.e("Hub","Error getting the image from server : " + e.getMessage().toString());
+	    } 
+	    return bm;
+	    //---------------------------------------------------
+	}
+
 	
 	
 	

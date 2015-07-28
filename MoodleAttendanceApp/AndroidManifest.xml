@@ -47,6 +47,30 @@
             android:label="@string/title_activity_fill_attendance"
             android:parentActivityName=".SessionActivity" >
         </activity>
+        <activity
+            android:name=".StudentAttendanceActivity"
+            android:label="@string/title_activity_student_attendance"
+            android:parentActivityName=".CourseAttendanceActivity" >
+        </activity>
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings"
+            android:parentActivityName=".UserCourseActivity" >
+        </activity>
+        <activity
+            android:name=".InfoSettingsActivity"
+            android:label="@string/title_activity_info_settings"
+            android:parentActivityName=".MainActivity" >
+        </activity>
+        <activity
+            android:name=".AddSession"
+            android:label="@string/title_activity_add_session"
+            android:parentActivityName=".SessionActivity" >
+        </activity>
+        <activity
+            android:name=".AddNewSession"
+            android:label="@string/title_activity_add_new_session" >
+        </activity>
     </application>
 
 </manifest>

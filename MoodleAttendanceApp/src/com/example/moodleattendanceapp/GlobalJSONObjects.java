@@ -7,7 +7,7 @@ public class GlobalJSONObjects {
 	
 	private User user=null;
 	
-	private HashMap<String, ArrayList<PostAttendanceData>> attendanceDataMap=new HashMap<>();
+	private HashMap<String, ArrayList<PostAttendanceData>> cloneAttendanceDataMap=new HashMap<>();
 	
 	private static GlobalJSONObjects instance=null;
 	
@@ -40,7 +40,7 @@ public class GlobalJSONObjects {
 	
 	public void addToAttendanceDataMap(String sessionId,ArrayList<PostAttendanceData> attendanceData)
 	{
-		attendanceDataMap.put(sessionId, attendanceData);
+		cloneAttendanceDataMap.put(sessionId, attendanceData);
 	}
 	
 }

@@ -29,7 +29,7 @@ public class Sessions extends JSONObject implements Parcelable
 
     private String groupid;
 
-    private String sessdate;
+    private long sessdate;
     
     public Sessions(Parcel p)
     {
@@ -42,7 +42,7 @@ public class Sessions extends JSONObject implements Parcelable
     	timemodified=p.readString();
     	lasttakenby=p.readString();
     	groupid=p.readString();
-    	sessdate=p.readString();
+    	sessdate=p.readLong();
     }
     
     public static final Parcelable.Creator<Sessions> CREATOR = new Parcelable.Creator<Sessions>() {
@@ -62,8 +62,7 @@ public class Sessions extends JSONObject implements Parcelable
     
     public Sessions(JSONObject obj) throws JSONException
     {
-    	try
-    	{
+
     		id=obj.getString("id");
     		duration=obj.getString("duration");
     		studentscanmark=obj.getString("studentscanmark");
@@ -73,12 +72,8 @@ public class Sessions extends JSONObject implements Parcelable
     		timemodified=obj.getString("timemodified");
     		lasttakenby=obj.getString("lasttakenby");
     		groupid=obj.getString("groupid");
-    		sessdate=obj.getString("sessdate");
-    	}
-    	catch(JSONException e)
-    	{
-    		throw e;
-    	}
+    		sessdate=obj.getLong("sessdate");
+
     }
 
     public String getId ()
@@ -171,12 +166,12 @@ public class Sessions extends JSONObject implements Parcelable
         this.groupid = groupid;
     }
 
-    public String getSessdate ()
+    public long getSessdate ()
     {
         return sessdate;
     }
 
-    public void setSessdate (String sessdate)
+    public void setSessdate (long sessdate)
     {
         this.sessdate = sessdate;
     }
@@ -199,7 +194,7 @@ public class Sessions extends JSONObject implements Parcelable
 		dest.writeString(timemodified);
 		dest.writeString(lasttakenby);
 		dest.writeString(groupid);
-		dest.writeString(sessdate);
+		dest.writeLong(sessdate);
 		
 	}
 	

@@ -30,9 +30,11 @@ public class AttendanceData
 
     private String status_set;
     
+    private String status_id;
+    
     public AttendanceData(JSONObject obj) throws JSONException
     {
-		try{
+
 	    	id=obj.getString("id");
 	    	user_name=obj.getString("user_name");
 	    	first_name=obj.getString("first_name");
@@ -43,17 +45,15 @@ public class AttendanceData
 	    	time_taken=obj.getString("time_taken");
 	    	status_set=obj.getString("status_set");
 	    	takenBy=new TakenBy(obj.getJSONObject("taken_by"));
-	    	
-		}
-		catch (JSONException e) {
-			throw e;
-		}
+	    	setStatus_id(obj.getString("status_id"));
+
     	
 	}
     
-    public AttendanceData(String id, String acronym, String remark, String firstName, String lastName)
+    public AttendanceData(String id,String sid, String acronym, String remark, String firstName, String lastName)
     {
     	this.id=id;
+    	this.status_id=sid;
     	this.acronym=acronym;
     	this.remarks=remark;
     	this.first_name=firstName;
@@ -244,6 +244,7 @@ public class AttendanceData
     }
     
     
+    
     public static String toJSON(ArrayList<AttendanceData> data)
 	{
 		JSONArray jArr=new JSONArray();
@@ -254,7 +255,7 @@ public class AttendanceData
 			try
 			{
 				j.put("i", a.getId());
-				j.put("s", a.getAcronym());
+				j.put("s", a.getStatus_id());
 				j.put("r", a.getRemarks());
 				
 				jArr.put(j);
@@ -266,6 +267,14 @@ public class AttendanceData
 		}
 		
 		return jArr.toString();
+	}
+
+	public String getStatus_id() {
+		return status_id;
+	}
+
+	public void setStatus_id(String status_id) {
+		this.status_id = status_id;
 	}
     
 }

@@ -47,20 +47,13 @@ public class EnrolledStudents extends JSONObject implements Parcelable
     
     public EnrolledStudents(JSONObject obj) throws JSONException {
 
-		try
-		{
 			profile_pic_url=obj.getString("profile_pic_url");
 			user_name=obj.getString("user_name");
 			first_name=obj.getString("first_name");
 			last_name=obj.getString("last_name");
 			user_id=obj.getString("user_id");
 			full_name=obj.getString("full_name");
-		
-		}
-		catch(JSONException e)
-		{
-			throw e;
-		}
+
 	
 	}
 

@@ -11,8 +11,11 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+       	
         android:background="#E65100"
         >
+
+        
 
     </RadioGroup>
 
@@ -30,6 +33,7 @@
             android:divider="#fff"
             android:dividerHeight="1dp" >
         </ListView>
+        
     </android.support.v4.widget.SwipeRefreshLayout>
 
 </LinearLayout>

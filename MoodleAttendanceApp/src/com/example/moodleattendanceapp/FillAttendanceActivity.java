@@ -12,6 +12,7 @@ import com.example.moodleattendanceapp.R.id;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -60,6 +61,61 @@ public class FillAttendanceActivity extends Activity {
 	
 	Menu menu;
 	
+	Boolean isFresh=false;
+	
+	Boolean isChanged=false;
+	
+	private void closeActivity() {
+		
+		if(isChanged)
+		{
+		
+			AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
+			dlgAlert.setMessage("Are you sure you want to go back? Any unsaved changes will be lost.");
+			dlgAlert.setTitle("Unsaved Changes!");
+			dlgAlert.setPositiveButton("Go Back", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					
+					FillAttendanceActivity.this.finish();
+					
+				}
+	
+				
+			});
+			
+			dlgAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					
+					dialog.dismiss();
+					
+				}
+			});
+	
+			dlgAlert.setCancelable(true);
+			dlgAlert.create().show();
+		
+		}
+		else
+		{
+			this.finish();
+		}
+		
+	}
+	
+	@Override
+	public void onBackPressed() {
+		
+		
+		
+		closeActivity();
+		
+		
+	}
+	
 	public void setAttendanceSelector(ArrayList<Statuses> s)
 	{
 		
@@ -82,15 +138,19 @@ public class FillAttendanceActivity extends Activity {
 		
 		for(Statuses s:statuses)
 		{
-			RadioButton r= new RadioButton(this);
-			
-			r.setText(s.getAcronym());
-			r.setTag(s);
-			RadioGroup.LayoutParams p = new RadioGroup.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-			p.weight = 1;
-			r.setLayoutParams(p);
-			r.setTextColor(Color.WHITE);
-			selectorRadioArrList.add(r);
+			if(s.getVisible().equals("1"))
+			{
+				RadioButton r= new RadioButton(this);
+				r.setHint(s.getDescription());
+				r.setHintTextColor(Color.WHITE);
+				r.setText(s.getAcronym());
+				r.setTag(s);
+				RadioGroup.LayoutParams p = new RadioGroup.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+				p.weight = 1;
+				r.setLayoutParams(p);
+				r.setTextColor(Color.WHITE);
+				selectorRadioArrList.add(r);
+			}
 			
 		}
 		
@@ -136,6 +196,8 @@ public class FillAttendanceActivity extends Activity {
 					for(String id:ids)
 					{
 						attendanceDataMap.get(id).setAcronym(s.getAcronym());
+											
+						attendanceDataMap.get(id).setStatus_id(s.getId());
 					}
 					
 					r.setChecked(false);
@@ -155,7 +217,11 @@ public class FillAttendanceActivity extends Activity {
 		try
 		{
 			
-			getAttendanceForSession(sessionId,this);			
+			if(ServiceHandler.hasActiveInternetConnection(this))
+			{
+			
+				getAttendanceForSession(sessionId,this);	
+			}
 			
 			
 		}
@@ -170,62 +236,66 @@ public class FillAttendanceActivity extends Activity {
 			@Override
 			public void onRefresh(){
 				
-				new AsyncTask<Void, Void, Void>(){
-					
-					String response="";
-					
-					@Override
-					protected Void doInBackground(Void... params) {
-						
-						ServiceHandler sh=new ServiceHandler();
-						response=sh.getAttendanceData(GlobalJSONObjects.getInstance().getUser().getToken(),sessionId);
-						
-						Log.i("MAA", " session id is: "+sessionId+"");
-						Log.i("MAA", response);
-						
-						return null;
-					}
-					
-					@Override
-					protected void onPostExecute(Void result)
-					{
-						try
-						{
-							JSONObject obj=new JSONObject(response);
-							JSONArray j=obj.getJSONArray("attendance_data");
-							
-							if(j.length()==0)
-							{
-								
-							}
-							else
-							{
-							
-								for (int i = 0; i < j.length(); i++)
-								{
-									AttendanceData ad=new AttendanceData(j.getJSONObject(i));
-									attendanceDataMap.put(ad.getId(), ad);
-									//postAttendanceDataMap.put(ad.getId(), new PostAttendanceData(ad.getId(), ad.getAcronym(), ad.getRemarks()));
-								}
-								
-								attendanceDataListAdapter.notifyDataSetChanged();
-							
-							}
-													
-							
-						}
-						catch (JSONException e) {
-							
-							Log.i("MAA", "(PULL TO REFRESH) Inside Catch!!");
-							
-						}
-						
-						swipeRefreshLayout.setRefreshing(false);
-						
-					}
-					
-				}.execute();
+				if(ServiceHandler.hasActiveInternetConnection(FillAttendanceActivity.this))
+				{
 				
+					new AsyncTask<Void, Void, Void>(){
+						
+						String response="";
+						
+						@Override
+						protected Void doInBackground(Void... params) {
+							
+							ServiceHandler sh=new ServiceHandler();
+							response=sh.getAttendanceData(GlobalJSONObjects.getInstance().getUser().getToken(),sessionId);
+							
+							Log.i("MAA", " session id is: "+sessionId+"");
+							Log.i("MAA", response);
+							
+							return null;
+						}
+						
+						@Override
+						protected void onPostExecute(Void result)
+						{
+							try
+							{
+								JSONObject obj=new JSONObject(response);
+								JSONArray j=obj.getJSONArray("attendance_data");
+								
+								if(j.length()==0)
+								{
+									
+								}
+								else
+								{
+								
+									for (int i = 0; i < j.length(); i++)
+									{
+										AttendanceData ad=new AttendanceData(j.getJSONObject(i));
+										attendanceDataMap.put(ad.getId(), ad);
+										//postAttendanceDataMap.put(ad.getId(), new PostAttendanceData(ad.getId(), ad.getAcronym(), ad.getRemarks()));
+									}
+									
+									attendanceDataListAdapter.notifyDataSetChanged();
+								
+								}
+														
+								
+							}
+							catch (JSONException e) {
+								
+								Log.i("MAA", "(PULL TO REFRESH) Inside Catch!!");
+								
+							}
+							
+							swipeRefreshLayout.setRefreshing(false);
+							
+						}
+						
+					}.execute();
+				}
+					
 			}
 		});
 		
@@ -238,6 +308,30 @@ public class FillAttendanceActivity extends Activity {
 		
 		
 		
+	}
+	
+	public int countByAcronym(String a)
+	{
+		int c=0;
+		for(String i:ids)
+		{
+			if(attendanceDataMap.get(i).getAcronym().equals(a))
+			{
+				c++;
+			}
+		}
+		return c;
+	}
+	
+	public ArrayList<String> getSummary()
+	{
+		ArrayList<Statuses> sataus=GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getStatuses();
+		ArrayList<String> msg=new ArrayList<String>();
+		for(Statuses s:sataus)
+		{
+			msg.add("Total "+s.getDescription()+" :"+countByAcronym(s.getAcronym())+"\n\n");
+		}
+		return msg;
 	}
 	
 	
@@ -258,7 +352,54 @@ public class FillAttendanceActivity extends Activity {
 		switch(item.getItemId())
 		{
 		
+			case android.R.id.home:
+				
+				
+				closeActivity();
+				
+				
+				return true;
+		
 			case R.id.action_save_attendance:
+				
+				String msg="";
+				
+				for(String s:getSummary())
+				{
+					msg=msg+s;
+				}
+				
+				AlertDialog.Builder dlgAlert  = new AlertDialog.Builder(this);
+				dlgAlert.setMessage(msg);
+				dlgAlert.setTitle("Attendance Summary");
+				dlgAlert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						
+						 Dialog d  = (Dialog) dialog;
+					     Context context = d.getContext();
+						
+					     if(ServiceHandler.hasActiveInternetConnection(context))
+					     {
+					    	 saveAttendance(context);
+					     }
+						
+						
+					}
+				});
+				dlgAlert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						
+						dialog.dismiss();
+						
+					}
+				});
+				
+				dlgAlert.setCancelable(true);
+				dlgAlert.create().show();
 				
 				return true;
 		
@@ -266,6 +407,105 @@ public class FillAttendanceActivity extends Activity {
 		}
 		
 		return super.onOptionsItemSelected(item);
+	}
+	
+	
+	public void saveAttendance(Context c)
+	{
+		final String statusSet=GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getStatusSet();
+		final String takenBy=GlobalJSONObjects.getInstance().getUser().getId();
+		
+		ArrayList<AttendanceData> tmpAttendanceData=new ArrayList<AttendanceData>();
+		
+		for(String id:ids)
+		{
+			tmpAttendanceData.add(attendanceDataMap.get(id));
+		}
+		
+		final String data=AttendanceData.toJSON(tmpAttendanceData);
+		
+		final Context context=c;
+		
+		final Boolean fresh=isFresh;
+		
+		Log.i("MAA", "SESSION ID: "+sessionId+" status set: "+statusSet+" TAKEN BY "+takenBy+" DATA "+data);
+		
+		new AsyncTask<Void, Void, Void>(){
+			
+			String response="";
+			
+			ProgressDialog progressDialog;
+			
+			@Override
+			protected void onPreExecute()
+			{
+				
+				progressDialog=null;
+				progressDialog=ProgressDialog.show(context, "Please Wait...", "Saving Attendance...",true);
+				progressDialog.show();
+				
+			}
+
+			@Override
+			protected Void doInBackground(Void... params) {
+				ServiceHandler sh=new ServiceHandler();
+				long unixTime = System.currentTimeMillis() / 1000L;
+				String timestamp=String.valueOf(unixTime);
+				if(fresh)
+				{
+					response=sh.uploadAttendanceData(sessionId, statusSet, takenBy,timestamp, data);
+				}
+				else
+				{
+					response=sh.updateAttendanceData(sessionId, statusSet, takenBy,timestamp, data);
+				}
+				return null;
+			}
+			
+			
+			@Override
+			protected void onPostExecute(Void result)
+			{
+				
+				Log.i("MAA","response: "+  response);
+				
+				try {
+					JSONObject obj = new JSONObject(response);
+					Response resp=new Response(obj.getJSONObject("response"));
+					Log.i("MAA","Message: "+  resp.getMessage()+"Comment: "+resp.getComment());
+					
+					Toast.makeText(context, resp.getComment(), 3000).show();
+					
+					//FillAttendanceActivity.this.finish();
+					
+				} catch (JSONException e) {
+					
+					
+					try {
+						ErrorObj err = new ErrorObj(response);
+						Log.i("MAA","Message: "+  err.getMessage()+"Comment: "+err.getComment());
+					} catch (JSONException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
+					
+					e.printStackTrace();
+				}
+				
+				
+				isChanged=false;
+				
+				progressDialog.dismiss();
+				
+				
+			}
+			
+			
+			
+			
+			
+		}.execute();
 	}
 	
 	
@@ -329,7 +569,7 @@ public class FillAttendanceActivity extends Activity {
 					}
 					else
 					{
-					
+						
 						for (int i = 0; i < j.length(); i++)
 						{
 							AttendanceData ad=new AttendanceData(j.getJSONObject(i));
@@ -351,13 +591,15 @@ public class FillAttendanceActivity extends Activity {
 				}
 				catch (JSONException e) {
 					
+					isFresh=true;
+					
 					Log.i("MAA", "Inside Catch!!");
 					
 					for(EnrolledStudents s:GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getEnrolledStudents())
 					{
 						Log.i("MAA", s.getFirst_name());
 						ids.add(s.getUser_id());
-						attendanceDataMap.put(s.getUser_id(), new AttendanceData(s.getUser_id(), GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getStatuses().get(0).getAcronym(), "",s.getFirst_name(),s.getLast_name()));
+						attendanceDataMap.put(s.getUser_id(), new AttendanceData(s.getUser_id(),GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getStatuses().get(0).getId(),GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getStatuses().get(0).getAcronym(), "",s.getFirst_name(),s.getLast_name()));
 					}
 					
 					setupListView(context, attendanceDataMap, ids);
@@ -418,16 +660,21 @@ public class FillAttendanceActivity extends Activity {
 				
 				for(Statuses s:statuses)
 				{
-					RadioButton r= new RadioButton(context);
-					r.setText(s.getAcronym());
-					r.setTag(s);
-					r.setFocusable(false);
-					r.setFocusableInTouchMode(false);
-					RadioGroup.LayoutParams p = new RadioGroup.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-					p.weight = 1;
-					r.setLayoutParams(p);
-					r.setTextColor(Color.WHITE);
-					radioArrList.add(r);
+					if(s.getVisible().equals("1"))
+					{
+						RadioButton r= new RadioButton(context);
+						r.setText(s.getAcronym());
+						r.setHint(s.getDescription());
+						r.setHintTextColor(Color.WHITE);
+						r.setTag(s);
+						r.setFocusable(false);
+						r.setFocusableInTouchMode(false);
+						RadioGroup.LayoutParams p = new RadioGroup.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+						p.weight = 1;
+						r.setLayoutParams(p);
+						r.setTextColor(Color.WHITE);
+						radioArrList.add(r);
+					}
 					
 				}
 				
@@ -500,7 +747,7 @@ public class FillAttendanceActivity extends Activity {
 			final ViewHolder holder;
 			   //Log.v("ConvertView", String.valueOf(position));
 			
-			final View v=convertView;
+			//final View v=convertView;
 			 
 			   if (convertView == null)
 			   {
@@ -543,28 +790,40 @@ public class FillAttendanceActivity extends Activity {
 			   else
 			   {
 				   Log.i("MAA", "checking in else radioStatus at pos "+position +" is "+attendanceDataMap.get(ids.get(position)));
-				   holder.rb.getByAcronym(attendanceDataMap.get(ids.get(position)).getAcronym()).setChecked(true);
+				   try
+				   {
+					   holder.rb.getByAcronym(attendanceDataMap.get(ids.get(position)).getAcronym()).setChecked(true);
+				   }
+				   catch (NullPointerException e) {
+					// TODO: handle exception
+				   }
 			   }
 			   
 			   
-			   if(attendanceDataMap.get(ids.get(position)).getAcronym().equals("P") || attendanceDataMap.get(ids.get(position)).getAcronym().equals("L"))
-			   {
-				   holder.radioGroup.setBackgroundColor(Color.parseColor("#8BC34A"));
-				   holder.tvStudentFullName.setBackgroundColor(Color.parseColor("#8BC34A"));
-			   }
-			   else
-			   {
-				   if(attendanceDataMap.get(ids.get(position)).getAcronym().equals("A"))
-				   {
-					   holder.radioGroup.setBackgroundColor(Color.parseColor("#F44336"));
-					   holder.tvStudentFullName.setBackgroundColor(Color.parseColor("#F44336"));
-				   }
-				   else
-				   {
-					   holder.radioGroup.setBackgroundColor(Color.parseColor("#EF6C00"));
-					   holder.tvStudentFullName.setBackgroundColor(Color.parseColor("#EF6C00"));
-				   }
-			   }
+
+				 holder.radioGroup.setBackgroundColor(Color.parseColor(GlobalSettings.getInstance().getStatusColor(GlobalSettings.getInstance().getmSharedPreferences(), attendanceDataMap.get(ids.get(position)).getAcronym())));
+				 holder.tvStudentFullName.setBackgroundColor(Color.parseColor(GlobalSettings.getInstance().getStatusColor(GlobalSettings.getInstance().getmSharedPreferences(), attendanceDataMap.get(ids.get(position)).getAcronym())));
+				
+			   
+			   
+//			   if(attendanceDataMap.get(ids.get(position)).getAcronym().equals("P") || attendanceDataMap.get(ids.get(position)).getAcronym().equals("L"))
+//			   {
+//				   holder.radioGroup.setBackgroundColor(Color.parseColor("#8BC34A"));
+//				   holder.tvStudentFullName.setBackgroundColor(Color.parseColor("#8BC34A"));
+//			   }
+//			   else
+//			   {
+//				   if(attendanceDataMap.get(ids.get(position)).getAcronym().equals("A"))
+//				   {
+//					   holder.radioGroup.setBackgroundColor(Color.parseColor("#F44336"));
+//					   holder.tvStudentFullName.setBackgroundColor(Color.parseColor("#F44336"));
+//				   }
+//				   else
+//				   {
+//					   holder.radioGroup.setBackgroundColor(Color.parseColor("#EF6C00"));
+//					   holder.tvStudentFullName.setBackgroundColor(Color.parseColor("#EF6C00"));
+//				   }
+//			   }
 			   
 				   
 				   
@@ -573,6 +832,8 @@ public class FillAttendanceActivity extends Activity {
 					@Override
 					public void onCheckedChanged(RadioGroup group, int checkedId) {
 						
+						isChanged=true;
+						
 						RadioButton rb=(RadioButton) findViewById(checkedId);
 						Statuses s=(Statuses) rb.getTag();
 						
@@ -580,29 +841,35 @@ public class FillAttendanceActivity extends Activity {
 						
 						attendanceDataMap.get(ids.get(pos)).setAcronym(s.getAcronym());
 						
-						Log.i("MAA", "id: "+s.getId()+" description: "+s.getDescription());
+						attendanceDataMap.get(ids.get(pos)).setStatus_id(s.getId());
+						
+						Log.i("MAA", "id: "+s.getId()+" description: "+s.getDescription()+" local");
+						Log.i("MAA", "id: "+attendanceDataMap.get(ids.get(pos)).getStatus_id()+" description: "+attendanceDataMap.get(ids.get(pos)).getAcronym()+" from hashmap");
 						
 						//postAttendanceDataMap.get(students.get(pos).getUser_id()).setStatus(s.getId());						
 						
 						
-						if(s.getAcronym().equals("P") || s.getAcronym().equals("L"))
-						   {
-							   holder.radioGroup.setBackgroundColor(Color.parseColor("#8BC34A"));
-							   holder.tvStudentFullName.setBackgroundColor(Color.parseColor("#8BC34A"));
-						   }
-						   else
-						   {
-							   if(s.getAcronym().equals("A"))
-							   {
-								   holder.radioGroup.setBackgroundColor(Color.parseColor("#F44336"));
-								   holder.tvStudentFullName.setBackgroundColor(Color.parseColor("#F44336"));
-							   }
-							   else
-							   {
-								   holder.radioGroup.setBackgroundColor(Color.parseColor("#EF6C00"));
-								   holder.tvStudentFullName.setBackgroundColor(Color.parseColor("#EF6C00"));
-							   }
-						   }
+						 holder.radioGroup.setBackgroundColor(Color.parseColor(GlobalSettings.getInstance().getStatusColor(GlobalSettings.getInstance().getmSharedPreferences(), s.getAcronym())));
+						 holder.tvStudentFullName.setBackgroundColor(Color.parseColor(GlobalSettings.getInstance().getStatusColor(GlobalSettings.getInstance().getmSharedPreferences(), s.getAcronym())));
+						
+//						if(s.getAcronym().equals("P") || s.getAcronym().equals("L"))
+//						   {
+//							   holder.radioGroup.setBackgroundColor(Color.parseColor("#8BC34A"));
+//							   holder.tvStudentFullName.setBackgroundColor(Color.parseColor("#8BC34A"));
+//						   }
+//						   else
+//						   {
+//							   if(s.getAcronym().equals("A"))
+//							   {
+//								   holder.radioGroup.setBackgroundColor(Color.parseColor("#F44336"));
+//								   holder.tvStudentFullName.setBackgroundColor(Color.parseColor("#F44336"));
+//							   }
+//							   else
+//							   {
+//								   holder.radioGroup.setBackgroundColor(Color.parseColor("#EF6C00"));
+//								   holder.tvStudentFullName.setBackgroundColor(Color.parseColor("#EF6C00"));
+//							   }
+//						   }
 						
 						
 						//Log.i("MAA", "(present) id: "+postAttendanceDataMap.get(students.get(pos).getUser_id()).getId()+" status:"+postAttendanceDataMap.get(students.get(pos).getUser_id()).getStatus());
@@ -620,8 +887,7 @@ public class FillAttendanceActivity extends Activity {
 		public void onItemClick(AdapterView<?> arg0, View arg1, int p,
 				long arg3) {
 			
-			Toast.makeText(context, "hiiiiii", Toast.LENGTH_SHORT).show();
-			
+						
 			String fn="First Name: "+attendanceDataMap.get(ids.get(p)).getFirst_name();
 			String ln="Last Name: "+attendanceDataMap.get(ids.get(p)).getLast_name();
 			String as="Attendance Status: "+attendanceDataMap.get(ids.get(p)).getDescription();

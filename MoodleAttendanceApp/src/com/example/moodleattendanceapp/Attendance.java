@@ -2,11 +2,15 @@ package com.example.moodleattendanceapp;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
@@ -15,9 +19,11 @@ public class Attendance extends JSONObject implements Parcelable
 {
     private String id;
 
-
+    
 
     private ArrayList<Sessions> sessions=new ArrayList<Sessions>();
+    
+    private ArrayList<StudentSession> studentSessions=new ArrayList<StudentSession>();
 
 
     private String name;
@@ -61,8 +67,7 @@ public class Attendance extends JSONObject implements Parcelable
     
     public Attendance(JSONObject obj) throws JSONException
     {
-    	try
-    	{
+
     		id=obj.getString("id");
     		name=obj.getString("name");
     		grade=obj.getString("grade");
@@ -71,19 +76,8 @@ public class Attendance extends JSONObject implements Parcelable
     		
     		JSONArray sessionsArr=obj.getJSONArray("sessions");
     		
+    		
     		JSONArray statusesArr=obj.getJSONArray("statuses");
-    		
-    		//sessions=new Sessions[sessionsArr.length()];
-    		
-    		//statuses=new Statuses[statusesArr.length()];
-    		
-    		for(int i=0;i<sessionsArr.length();i++)
-    		{
-    			Sessions s=new Sessions(sessionsArr.getJSONObject(i));
-    			sessions.add(s);
-    		}
-    		
-    		
     		
     		for(int i=0;i<statusesArr.length();i++)
     		{
@@ -91,11 +85,31 @@ public class Attendance extends JSONObject implements Parcelable
     			statuses.add(s);
     		}
     		
-    	}
-    	catch(JSONException e)
-    	{
-    		throw e;
-    	}
+    		
+    		//sessions=new Sessions[sessionsArr.length()];
+    		
+    		//statuses=new Statuses[statusesArr.length()];
+    		try
+    		{
+	    		for(int i=0;i<sessionsArr.length();i++)
+	    		{
+	    			Sessions s=new Sessions(sessionsArr.getJSONObject(i));
+	    			sessions.add(s);
+	    		}
+	    		
+	    		
+	    		
+    		}
+    		catch (Exception e) {
+				
+    			for(int i=0;i<sessionsArr.length();i++)
+	    		{
+	    			StudentSession s=new StudentSession(sessionsArr.getJSONObject(i));
+	    			studentSessions.add(s);
+	    		}
+    			
+			}
+
     }
 
     public String getId ()
@@ -107,10 +121,61 @@ public class Attendance extends JSONObject implements Parcelable
     {
         this.id = id;
     }
+    
+    public ArrayList<Sessions> sortSessions(ArrayList<Sessions> sessions)
+	{
+		ArrayList<Sessions> tmpLst=new ArrayList<Sessions>();
+		
+		List<Long> list = new ArrayList<Long>();
+
+		
+		for(Sessions s:sessions)
+		{
+			list.add(s.getSessdate());
+		}
+		
+		Collections.sort(list);
+		
+		for(int i=list.size()-1;i>=0;i--)
+		{
+			long s=list.get(i);
+			tmpLst.add(getSessionBySessdate(s));
+		}
+		
+		return tmpLst;
+		
+	}
+    
+    public ArrayList<StudentSession> sorStudenttSessions(ArrayList<StudentSession> studentSessions)
+	{
+		ArrayList<StudentSession> tmpLst=new ArrayList<StudentSession>();
+		
+		List<Long> list = new ArrayList<Long>();
+
+		
+		for(StudentSession s:studentSessions)
+		{
+			list.add(s.getSession_date());
+		}
+		
+		Collections.sort(list);
+		
+		for(int i=list.size()-1;i>=0;i--)
+		{
+			long s=list.get(i);
+			tmpLst.add(getStudentSessionBySessdate(s));
+		}
+		
+		return tmpLst;
+		
+	}
 
     public ArrayList<Sessions> getSessions ()
     {
-        return sessions;
+    	
+    	
+    	
+        return sortSessions(sessions);
     }
 
     public void setSessions (ArrayList<Sessions> sessions)
@@ -218,6 +283,74 @@ public class Attendance extends JSONObject implements Parcelable
 		}
 		return null;
 	}
+	
+	
+	public String getStatusSet()
+	{
+		String set="";
+		
+		for(Statuses s:statuses)
+		{
+			set=set+s.getId()+",";
+		}
+		set=set.substring(0, set.length()-1);
+		
+		return set;
+	}
+	
+	
+	public String getAcronymId(String acronym)
+	{
+		
+		for(Statuses s:statuses)
+		{
+			if(acronym.equals(s.getAcronym()))
+			{
+				return s.getId();
+			}
+		}
+		
+		
+		return "0";
+	}
+
+	public ArrayList<StudentSession> getStudentSessions() {
+		return sorStudenttSessions(studentSessions);
+	}
+
+	public void setStudentSessions(ArrayList<StudentSession> studentSessions) {
+		this.studentSessions = studentSessions;
+	}
+	
+	public Sessions getSessionBySessdate(long date)
+	{
+		for(Sessions s:sessions)
+		{
+			if(s.getSessdate()==date)
+			{
+				return s;
+			}
+		}
+		return null;
+	}
+	
+	public StudentSession getStudentSessionBySessdate(long date)
+	{
+		for(StudentSession s:studentSessions)
+		{
+			if(s.getSession_date()==date)
+			{
+				return s;
+			}
+		}
+		return null;
+	}
+	
+	
+	
+	
+	
+	
 	
 	
 }

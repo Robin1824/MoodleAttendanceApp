@@ -47,18 +47,13 @@ public class Statuses extends JSONObject implements Parcelable
     
     public Statuses(JSONObject obj) throws JSONException
     {
-    	try
-    	{
+
 	    	id=obj.getString("id");
 	    	visible=obj.getString("visible");
 	    	acronym=obj.getString("acronym");
 	    	description=obj.getString("description");
 	    	grade=obj.getString("deleted");
-    	}
-    	catch(JSONException e)
-    	{
-    		throw e;
-    	}
+
     }
 
     public String getId ()

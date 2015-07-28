@@ -13,17 +13,19 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:text="Session Date"
+        android:layout_marginTop="3dp"
         android:textColor="#fff"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <TextView
         android:id="@+id/tvSessionDescription"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/tvSessionDate"
         android:text="Description"
         android:textColor="#E0E0E0"
+        android:paddingTop="3dp"
         android:paddingBottom="3dp"
         android:textAppearance="?android:attr/textAppearanceSmall" />
 

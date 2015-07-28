@@ -9,6 +9,7 @@ import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -39,12 +40,157 @@ public class CourseAttendanceActivity extends Activity {
 	ArrayList<Attendance> attendanceArrayList;
 	
 	int coursePosition;
+	
+	SharedPreferences mSharedPreferences;
+	
+	public void refreshStudentAttendance()
+	{
+		if(mSharedPreferences.contains("tmp_username") && mSharedPreferences.contains("tmp_password"))
+    	{
+			new AsyncTask<Void, Void, Void>(){
+				
+				String response="";
+				
+				Boolean success=false;
+	
+										
+				@Override
+				protected Void doInBackground(Void... params) {
+					
+					ServiceHandler sh=new ServiceHandler();
+					response=sh.login(mSharedPreferences.getString("tmp_username", null), mSharedPreferences.getString("tmp_password", null));
+					return null;
+					
+				}
+				
+				@Override
+				protected void onPostExecute(Void result) {
+					
+					try {
+						Log.i("MAA", response);
+						JSONObject obj=new JSONObject(response).getJSONObject("user");							
+						GlobalJSONObjects.getInstance().setUser(new User(obj));
+						Log.i("MAA",GlobalJSONObjects.getInstance().getUser().getFull_name());
+						success=true;
+						
+					} catch (JSONException e) {
+	
+						try {
+							ErrorObj errObj=new ErrorObj(response);
+							Toast.makeText(CourseAttendanceActivity.this, errObj.getComment(), Toast.LENGTH_SHORT).show();
+						} catch (JSONException e1) {
+							Log.e("MAA", "error in processing ERROR JSON");
+							e1.printStackTrace();
+						}
+	
+						Log.e("MAA", "error in processing JSON");
+						e.printStackTrace();
+						
+					}				
+					
+					if(success)
+					{
+						
+						//Log.i("MAA", GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions().get(0).getSessionDate());
+						
+												
+						//sessionArrayList.addAll(GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions());
+						
+						//Log.i("MAA", "size is "+GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions().size()+"");
+						
+						attendanceListAdapter.notifyDataSetChanged();
+						
+						
+						
+					}
+					
+					//progressDialog.dismiss();
+					
+					swipeContainer.setRefreshing(false);
+	
+					
+				}
+			
+			}.execute();
+    	}
+	}
+	
+	public void refreshAttendance()
+	{
+		new AsyncTask<Void, Void, Void>(){
+
+			String response="";
+			
+			Boolean success=false;
+
+									
+			@Override
+			protected Void doInBackground(Void... params) {
+				
+				ServiceHandler sh=new ServiceHandler();
+				response=sh.getAttendanceType(GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getId());
+				return null;
+				
+			}
+			
+			@Override
+			protected void onPostExecute(Void result) {
+				
+				try {
+					Log.i("MAA", response);
+					JSONObject obj=new JSONObject(response);							
+					GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).refreshAttendance(obj);
+					Log.i("MAA",GlobalJSONObjects.getInstance().getUser().getFull_name());
+					success=true;
+					
+				} catch (JSONException e) {
+
+					try {
+						ErrorObj errObj=new ErrorObj(response);
+						Toast.makeText(CourseAttendanceActivity.this, errObj.getComment(), Toast.LENGTH_SHORT).show();
+					} catch (JSONException e1) {
+						Log.e("MAA", "error in processing ERROR JSON");
+						e1.printStackTrace();
+					}
+
+					Log.e("MAA", "error in processing JSON");
+					e.printStackTrace();
+					
+				}				
+				
+				if(success)
+				{
+					
+					//Log.i("MAA", GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions().get(0).getSessionDate());
+					
+											
+					//sessionArrayList.addAll(GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions());
+					
+					//Log.i("MAA", "size is "+GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions().size()+"");
+					
+					attendanceListAdapter.notifyDataSetChanged();
+					
+					
+					
+				}
+				
+				//progressDialog.dismiss();
+				
+				swipeContainer.setRefreshing(false);
+
+				
+			}
+		
+		}.execute();
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		SetActionBar();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_course_attendance);
+		
+		mSharedPreferences = getSharedPreferences("moodle_attendance_app_shared_pref", Context.MODE_PRIVATE);
 		
 		swipeContainer = (SwipeRefreshLayout) findViewById(R.id.attendanceSwipeContainer);
 
@@ -54,72 +200,22 @@ public class CourseAttendanceActivity extends Activity {
 			public void onRefresh() {
 				
 				
-				new AsyncTask<Void, Void, Void>(){
-
-					String response="";
-					
-					Boolean success=false;
-
-											
-					@Override
-					protected Void doInBackground(Void... params) {
-						
-						ServiceHandler sh=new ServiceHandler();
-						response=sh.getAttendanceType(GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getId());
-						return null;
-						
-					}
-					
-					@Override
-					protected void onPostExecute(Void result) {
-						
-						try {
-							Log.i("MAA", response);
-							JSONObject obj=new JSONObject(response);							
-							GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).refreshAttendance(obj);
-							Log.i("MAA",GlobalJSONObjects.getInstance().getUser().getFull_name());
-							success=true;
-							
-						} catch (JSONException e) {
-
-							try {
-								ErrorObj errObj=new ErrorObj(response);
-								Toast.makeText(CourseAttendanceActivity.this, errObj.getComment(), Toast.LENGTH_SHORT).show();
-							} catch (JSONException e1) {
-								Log.e("MAA", "error in processing ERROR JSON");
-								e1.printStackTrace();
-							}
-
-							Log.e("MAA", "error in processing JSON");
-							e.printStackTrace();
-							
-						}				
-						
-						if(success)
-						{
-							
-							//Log.i("MAA", GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions().get(0).getSessionDate());
-							
-													
-							//sessionArrayList.addAll(GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions());
-							
-							//Log.i("MAA", "size is "+GlobalJSONObjects.getInstance().getUser().getCourse().get(coursePosition).getAttendance().get(attendancePosition).getSessions().size()+"");
-							
-							attendanceListAdapter.notifyDataSetChanged();
-							
-							
-							
-						}
-						
-						//progressDialog.dismiss();
-						
-						swipeContainer.setRefreshing(false);
-
-						
-					}
 				
-				}.execute();
-
+				if(GlobalJSONObjects.getInstance().getUser().getRole_short_name(false).equals("Student"))
+				{
+					if(ServiceHandler.hasActiveInternetConnection(CourseAttendanceActivity.this))
+					{
+						refreshStudentAttendance();
+					}
+				}
+				else
+				{
+					if(ServiceHandler.hasActiveInternetConnection(CourseAttendanceActivity.this))
+					{
+						refreshAttendance();
+					}
+				}
+				
 				
 				
 			}
@@ -246,18 +342,29 @@ public class CourseAttendanceActivity extends Activity {
 			
 			Log.i("MAA", data.get(position).getName());
 			
-			Intent i=new Intent(context,SessionActivity.class);
+			Intent i;
+			
+			if(GlobalJSONObjects.getInstance().getUser().getRole_short_name(false).equals("Student"))
+			{
+				i=new Intent(context,StudentAttendanceActivity.class);
+				i.putExtra("title", data.get(position).getName());
+				Log.i("MAA", "opening--------- StudentAttendanceActivity");
+			}
+			else
+			{
+			
+				i=new Intent(context,SessionActivity.class);		
+				Log.i("MAA", "opening--------- SessionActivity");
+			
+			}
 			
 			i.putExtra("course_position", coursePosition);
 			i.putExtra("attendance_position", position);
 			
 			startActivity(i);
 			
-			
 		}
-	
-	
-	
+
 	}
 	
 	static class ViewHolder{

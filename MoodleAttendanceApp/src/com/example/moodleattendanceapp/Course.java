@@ -58,8 +58,7 @@ public class Course extends JSONObject implements Parcelable
     
     public Course(JSONObject obj) throws JSONException
     {
-    	try
-    	{
+
     		id=obj.getString("id");
     		short_name=obj.getString("short_name");
     		full_name=obj.getString("full_name");
@@ -95,10 +94,6 @@ public class Course extends JSONObject implements Parcelable
     			
     		}
     		
-    	}
-    	catch (JSONException e) {
-			throw e;
-		}
     }
 
     public String getId ()

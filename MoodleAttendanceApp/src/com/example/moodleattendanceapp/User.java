@@ -1,6 +1,7 @@
 package com.example.moodleattendanceapp;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
 
 
@@ -10,6 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.net.Uri;
 
 
@@ -81,8 +84,7 @@ public class User extends JSONObject implements Parcelable
     
     public User(JSONObject obj) throws JSONException
     {
-    	try
-    	{
+
     		id=obj.getString("id");
     		token=obj.getString("token");
     		JSONArray coursesArr=obj.getJSONArray("course");
@@ -98,11 +100,7 @@ public class User extends JSONObject implements Parcelable
     		role_short_name=obj.getString("role_short_name").substring(0,1).toUpperCase() + obj.getString("role_short_name").substring(1);
     		last_name=obj.getString("last_name").substring(0,1).toUpperCase() + obj.getString("last_name").substring(1);
     		full_name=first_name +" "+ last_name;
-    	}
-    	catch(JSONException e)
-    	{
-    		throw e;
-    	}
+
     }
 
     public ArrayList<Course> getCourse ()
@@ -175,9 +173,13 @@ public class User extends JSONObject implements Parcelable
 
     public String getRole_short_name (Boolean returnRaw)
     {
-    	if(!returnRaw)
+    	if(returnRaw)
     	{
-	    	if(role_short_name.contains("teacher"))
+    		return role_short_name;
+    	}
+    	else
+    	{
+    		if(role_short_name.contains("teacher"))
 	    	{
 	    		return "Teacher";
 	    	}
@@ -186,10 +188,7 @@ public class User extends JSONObject implements Parcelable
 	    		return "Student";
 	    	}
 	    	return role_short_name;
-    	}
-    	else
-    	{
-    		return role_short_name;
+    		
     	}
     }
 
@@ -298,6 +297,62 @@ public class User extends JSONObject implements Parcelable
 		
 		return total+"";
 		
+	}
+	
+	
+	public void setStatusColor(SharedPreferences sp)
+	{
+		Editor editor=sp.edit();
+		for (Course c : course) {
+			for (Attendance a : c.getAttendance()) {
+				for(Statuses s:a.getStatuses())
+				{
+					if(!sp.contains(s.getAcronym()))
+					{
+						editor.putString(s.getAcronym(), "#EF6C00");
+					}
+					
+				}
+			}
+		}
+		editor.commit();
+	}
+	
+	public void setStatusColor(SharedPreferences sp,String acronym,String colorHex)
+	{
+		Editor editor=sp.edit();
+		for (Course c : course) {
+			for (Attendance a : c.getAttendance()) {
+				for(Statuses s:a.getStatuses())
+				{
+					if(s.getAcronym().equals(acronym))
+					{
+						editor.putString(acronym, colorHex);
+					}
+				}
+			}
+		}
+		editor.commit();
+		
+	}
+	
+	public ArrayList<String> getAcronymArrayList()
+	{
+		HashMap<String, String> map=new HashMap<String, String>();
+		
+		for (Course c : course) {
+			for (Attendance a : c.getAttendance()) {
+				for(Statuses s:a.getStatuses())
+				{
+					map.put(s.getAcronym(), s.getAcronym());
+				}
+			}
+		}
+		
+		ArrayList<String> list=new ArrayList<String>();
+		list.addAll(map.values());
+		
+		return list; 
 	}
 
 }
