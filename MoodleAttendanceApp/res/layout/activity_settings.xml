@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#EF6C00"
-    tools:context="com.example.moodleattendanceapp.SettingsActivity" >
+    tools:context="com.rutvik.moodleattendanceapp.SettingsActivity" >
 
     <TextView
         android:id="@+id/textView1"

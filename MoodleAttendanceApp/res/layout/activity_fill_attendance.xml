@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.moodleattendanceapp.FillAttendanceActivity" >
+    tools:context="com.rutvik.moodleattendanceapp.FillAttendanceActivity" >
 
     <RadioGroup
         android:id="@+id/rgAttendanceSelector"

@@ -11,7 +11,7 @@
         android:layout_marginTop="15dp"
         android:orientation="horizontal" >
 
-        <com.example.moodleattendanceapp.RoundedImageView
+        <com.rutvik.moodleattendanceapp.RoundedImageView
             android:id="@+id/imgUserProPic"
             android:layout_width="100dp"
             android:layout_height="100dp"
