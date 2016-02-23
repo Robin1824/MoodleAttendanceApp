@@ -7,6 +7,30 @@
     android:background="#EF6C00"
     tools:context="com.rutvik.moodleattendanceapp.SettingsActivity" >
 
+    <CheckBox
+        android:id="@+id/chk_showStudentFullName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show Student Full Name"
+        android:textColor="#fff" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="#fff" />
+
+    <CheckBox
+        android:id="@+id/chk_toggleIdAsPrefix"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:text="Use ID as Prefix for Student Names" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="#fff" />
+
     <TextView
         android:id="@+id/textView1"
         android:layout_width="wrap_content"
@@ -15,11 +39,6 @@
         android:padding="5dp"
         android:textColor="#fff"
         android:textAppearance="?android:attr/textAppearanceMedium" />
-    
-    <View
-    android:layout_width="fill_parent"
-    android:layout_height="1dp"
-    android:background="#fff"/>
 
     <ListView
             android:paddingLeft="5dp"

@@ -21,6 +21,9 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -46,6 +49,8 @@ public class SettingsActivity extends Activity {
 	SharedPreferences mSharedPreferences;
 	
 	Menu menu;
+	
+	CheckBox chkUsePrefix,chkShowUserFullName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +65,33 @@ public class SettingsActivity extends Activity {
 		
 		mSharedPreferences = getSharedPreferences("moodle_attendance_app_shared_pref", Context.MODE_PRIVATE);
 
+		chkUsePrefix=(CheckBox)findViewById(R.id.chk_toggleIdAsPrefix);
+
+		chkUsePrefix.setChecked(GlobalSettings.getInstance().useIdAsPrefix());
+		
+		chkUsePrefix.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				
+				GlobalSettings.getInstance().useIdAsPrefix(isChecked);
+				
+			}
+		});
+		
+		chkShowUserFullName=(CheckBox)findViewById(R.id.chk_showStudentFullName);
+		
+		chkShowUserFullName.setChecked(GlobalSettings.getInstance().showStudentFullName());
+		
+		chkShowUserFullName.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				
+				GlobalSettings.getInstance().showStudentFullName(isChecked);
+				
+			}
+		});
 		
 		listView=(ListView) findViewById(R.id.lvSettingsAttributes);
 		

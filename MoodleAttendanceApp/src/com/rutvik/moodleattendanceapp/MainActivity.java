@@ -48,6 +48,8 @@ public class MainActivity extends Activity {
 
 		SetActionBar();
 		setContentView(R.layout.activity_main);
+		
+		
 
 
 		mSharedPreferences = getSharedPreferences("moodle_attendance_app_shared_pref", Context.MODE_PRIVATE);
@@ -224,8 +226,9 @@ public class MainActivity extends Activity {
 				try {
 					response=sh.login(u, p);
 					GlobalJSONObjects.getInstance().saveJSONObjects(response);
+					MoodleAttendanceApp.getInstance().trackEvent("Login", "Login Click", "User Clicked Login");
 				} catch (JSONException e) {
-					// TODO Auto-generated catch block
+					MoodleAttendanceApp.getInstance().trackException(e);
 					e.printStackTrace();
 				}
 				return null;
@@ -244,9 +247,11 @@ public class MainActivity extends Activity {
 				} catch (JSONException e) {
 
 					try {
+						MoodleAttendanceApp.getInstance().trackException(e);
 						ErrorObj errObj=new ErrorObj(response);
 						Toast.makeText(c, errObj.getComment(), Toast.LENGTH_SHORT).show();
 					} catch (JSONException e1) {
+						MoodleAttendanceApp.getInstance().trackException(e1);
 						Log.e("MAA", "error in processing ERROR JSON   "+response);
 						e1.printStackTrace();
 					}

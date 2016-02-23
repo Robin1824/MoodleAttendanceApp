@@ -32,6 +32,13 @@ public class InfoSettingsActivity extends Activity {
 	TextView tv,info;
 	
 	@Override
+	protected void onResume() {
+		// TODO Auto-generated method stub
+		super.onResume();
+		MoodleAttendanceApp.getInstance().trackScreenView("Info and Settings Page");
+	}
+	
+	@Override
 	public void onBackPressed() {
 		if(!TextUtils.isEmpty(etMoodleHost.getText()))
 		{

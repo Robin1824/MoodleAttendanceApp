@@ -17,21 +17,17 @@ import android.util.Log;
 
 public class Attendance extends JSONObject implements Parcelable
 {
-    private String id;
-
-    
+    private String id;   
 
     private ArrayList<Sessions> sessions=new ArrayList<Sessions>();
     
     private ArrayList<StudentSession> studentSessions=new ArrayList<StudentSession>();
 
-
     private String name;
 
     private String grade;
-
-
-
+    
+    
     private ArrayList<Statuses> statuses=new ArrayList<Statuses>();
 
     

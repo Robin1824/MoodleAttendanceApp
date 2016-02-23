@@ -34,6 +34,8 @@ public class AttendanceData
     
     private String status_id;
     
+    private ArrayList<AttendanceData> sortedAttendanceData;
+    
     public AttendanceData(JSONObject obj) throws JSONException
     {
 

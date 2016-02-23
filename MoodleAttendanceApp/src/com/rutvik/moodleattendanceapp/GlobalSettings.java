@@ -11,6 +11,8 @@ public class GlobalSettings {
 	
 	private SharedPreferences mSharedPreferences;
 	
+	private Boolean useIdAsPrefix,showStudentFullName;
+	
 	public synchronized static GlobalSettings getInstance()
 	{
 		
@@ -21,6 +23,40 @@ public class GlobalSettings {
 		
 		return instance;
 		
+	}
+	
+	public void useIdAsPrefix(Boolean flag)
+	{
+		useIdAsPrefix=flag;
+		if(mSharedPreferences!=null)
+		{
+			Editor e=mSharedPreferences.edit();
+			e.putBoolean("useIdAsPrefix", useIdAsPrefix);
+			e.commit();
+		}
+	}
+	
+	public void showStudentFullName(Boolean flag)
+	{
+		showStudentFullName=flag;
+		if(mSharedPreferences!=null)
+		{
+			Editor e=mSharedPreferences.edit();
+			e.putBoolean("showStudentFullName", showStudentFullName);
+			e.commit();
+		}
+	}
+	
+	
+	public Boolean showStudentFullName()
+	{
+		return showStudentFullName;
+	}
+	
+	
+	public Boolean useIdAsPrefix()
+	{
+		return useIdAsPrefix;
 	}
 	
 	
@@ -57,6 +93,8 @@ public class GlobalSettings {
 
 	public void setmSharedPreferences(SharedPreferences mSharedPreferences) {
 		this.mSharedPreferences = mSharedPreferences;
+		useIdAsPrefix=mSharedPreferences.getBoolean("useIdAsPrefix", false);
+		showStudentFullName=mSharedPreferences.getBoolean("showStudentFullName", false);
 	}
 	
 	
