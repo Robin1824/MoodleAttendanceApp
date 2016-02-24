@@ -11,7 +11,7 @@
         android:id="@+id/chk_showStudentFullName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Show Student Full Name"
+        android:text="Show student full name"
         android:textColor="#fff" />
 
     <View
@@ -24,7 +24,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textColor="#fff"
-        android:text="Use ID as Prefix for Student Names" />
+        android:text="Use ID as prefix for student names" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="#fff" />
+    
+    <CheckBox
+        android:id="@+id/chk_toggleSortStudentByName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="#fff"
+        android:text="Sort students by name" />
 
     <View
         android:layout_width="fill_parent"

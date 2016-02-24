@@ -12,9 +12,11 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -50,7 +52,7 @@ public class SettingsActivity extends Activity {
 	
 	Menu menu;
 	
-	CheckBox chkUsePrefix,chkShowUserFullName;
+	CheckBox chkUsePrefix,chkShowUserFullName,chkSortStudentByName;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +95,20 @@ public class SettingsActivity extends Activity {
 			}
 		});
 		
+		chkSortStudentByName=(CheckBox) findViewById(R.id.chk_toggleSortStudentByName);
+		
+		chkSortStudentByName.setChecked(GlobalSettings.getInstance().sortStudentByName());
+		
+		chkSortStudentByName.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				
+				GlobalSettings.getInstance().sortStudentByName(isChecked);
+				
+			}
+		});
+		
 		listView=(ListView) findViewById(R.id.lvSettingsAttributes);
 		
 		colorMap.put("Red", "#F44336");
@@ -126,6 +142,16 @@ public class SettingsActivity extends Activity {
 		mActionBar.setTitle("Settings");
 		
 		mActionBar.setDisplayHomeAsUpEnabled(true);
+		
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if(item.getItemId()==android.R.id.home)
+		{
+			this.finish();
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	

@@ -11,7 +11,7 @@ public class GlobalSettings {
 	
 	private SharedPreferences mSharedPreferences;
 	
-	private Boolean useIdAsPrefix,showStudentFullName;
+	private Boolean useIdAsPrefix,showStudentFullName,sortStudentByName;
 	
 	public synchronized static GlobalSettings getInstance()
 	{
@@ -47,6 +47,17 @@ public class GlobalSettings {
 		}
 	}
 	
+	public void sortStudentByName(Boolean flag)
+	{
+		sortStudentByName=flag;
+		if(mSharedPreferences!=null)
+		{
+			Editor e=mSharedPreferences.edit();
+			e.putBoolean("sortStudentByName", sortStudentByName);
+			e.commit();
+		}
+	}
+	
 	
 	public Boolean showStudentFullName()
 	{
@@ -59,6 +70,9 @@ public class GlobalSettings {
 		return useIdAsPrefix;
 	}
 	
+	public Boolean sortStudentByName(){
+		return sortStudentByName;
+	}
 	
 	public String getStatusColor(SharedPreferences sp,String acronym)
 	{
@@ -95,6 +109,7 @@ public class GlobalSettings {
 		this.mSharedPreferences = mSharedPreferences;
 		useIdAsPrefix=mSharedPreferences.getBoolean("useIdAsPrefix", false);
 		showStudentFullName=mSharedPreferences.getBoolean("showStudentFullName", false);
+		sortStudentByName=mSharedPreferences.getBoolean("sortStudentByName", false);
 	}
 	
 	

@@ -57,6 +57,7 @@ public class InfoSettingsActivity extends Activity {
 			{
 				GlobalSettings.getInstance().setHost(mSharedPreferences, etMoodleHost.getText().toString());
 			}
+			this.finish();
 		}
 		return super.onOptionsItemSelected(item);
 	}

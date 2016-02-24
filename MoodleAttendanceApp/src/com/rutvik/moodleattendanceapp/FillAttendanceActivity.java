@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,27 +80,31 @@ public class FillAttendanceActivity extends Activity {
 		for(int i=0;i<map.size();i++)
 		{
 			String filteredName=map.get(ids.get(i)).getFirst_name();
-			
-			int count = filteredName.length() - filteredName.replace("_", "").length();
-			
-			if(count==1)
-			{
 
-				try
-				{				
-					filteredName=filteredName.substring(filteredName.indexOf("_")+1, filteredName.length());
-	
-					Log.i("Moodle Attendance", "Filtered Name: "+filteredName);						
+			if(GlobalSettings.getInstance().sortStudentByName()){
+
+				int count = filteredName.length() - filteredName.replace("_", "").length();
+
+				if(count==1)
+				{
+
+					try
+					{				
+						filteredName=filteredName.substring(filteredName.indexOf("_")+1, filteredName.length());
+
+						Log.i("Moodle Attendance", "Filtered Name: "+filteredName);						
+					}
+					catch (Exception e) {
+
+						MoodleAttendanceApp.getInstance().trackEvent("sorting attendance", filteredName, "");
+
+						MoodleAttendanceApp.getInstance().trackException(e);
+
+						e.printStackTrace();
+					}
+
 				}
-				catch (Exception e) {
-					
-					MoodleAttendanceApp.getInstance().trackEvent("sorting attendance", filteredName, "");
-					
-					MoodleAttendanceApp.getInstance().trackException(e);
-					
-					e.printStackTrace();
-				}
-			
+
 			}
 
 			list.put(map.get(ids.get(i)).getId(), filteredName);
@@ -655,9 +660,18 @@ public class FillAttendanceActivity extends Activity {
 
 					//success=true;
 
-					sortStudentsByName(attendanceDataMap);
+					if(GlobalSettings.getInstance().useIdAsPrefix()){
+						Map<String, AttendanceData> map=new TreeMap<String,AttendanceData>(attendanceDataMap);
+						setupListView(context, map, ids);
+					}
+					else{
+						sortStudentsByName(attendanceDataMap);
+						setupListView(context, attendanceDataMap, ids);
+					}
 
-					setupListView(context, attendanceDataMap, ids);
+
+
+
 
 
 
@@ -689,7 +703,7 @@ public class FillAttendanceActivity extends Activity {
 	}
 
 
-	public void setupListView(Context context,HashMap<String,AttendanceData> attendanceDataMap,ArrayList<String> ids)
+	public void setupListView(Context context,Map<String,AttendanceData> attendanceDataMap,ArrayList<String> ids)
 	{
 		attendanceDataListAdapter=new AttendanceDataListAdapter(context, attendanceDataMap, ids);
 
@@ -707,7 +721,7 @@ public class FillAttendanceActivity extends Activity {
 
 
 
-		HashMap<String,AttendanceData> attendanceDataMap=new HashMap<String,AttendanceData>();
+		Map<String,AttendanceData> attendanceDataMap=new HashMap<String,AttendanceData>();
 
 		ArrayList<String> ids=new ArrayList<String>();
 
@@ -715,7 +729,7 @@ public class FillAttendanceActivity extends Activity {
 
 		Context context;
 
-		public AttendanceDataListAdapter(Context context,HashMap<String,AttendanceData> attendanceDataMap,ArrayList<String> ids) {
+		public AttendanceDataListAdapter(Context context,Map<String,AttendanceData> attendanceDataMap,ArrayList<String> ids) {
 
 			this.context=context;
 			this.attendanceDataMap=attendanceDataMap;
